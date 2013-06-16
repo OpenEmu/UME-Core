@@ -1,0 +1,10 @@
+#include "osd_config.h"
+#include "osdcomm.h"
+#include "osd_cpu.h"
+#include "osdcore.h"
+#include "emu.h"
+#include "debugger.h"
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
