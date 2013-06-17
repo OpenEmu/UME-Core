@@ -1,4 +1,5 @@
-MAME-Core
-=========
+UME-Core
+========
 
-OpenEmu Core plugin with MAME to support arcade machine emulation
+OpenEmu Core plugin for UME
+
