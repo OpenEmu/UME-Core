@@ -44,7 +44,8 @@
     osd_event *_renderEvent;
 
     NSString *_romDir;
-    
+    NSString *_driverName;
+
     double _sampleRate;
     OEIntSize _bufferSize;
 }
@@ -105,32 +106,36 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
 
     _romDir = [path stringByDeletingLastPathComponent];
     if (!_romDir) return NO;
-    
+
     // Need a better way to identify the ROM driver from the archive path
     // Currently the rom is hardcoded to "robotron"
-    
+
     // The code below works by hashing the individual files and checking each
     // but takes *forever* and does not scale at O(n)
     //media_identifier ident(options);
     //ident.identify([path cStringUsingEncoding:NSUTF8StringEncoding]);
     //NSLog(@"I found this many matches: %i", ident.matches());
-    
+
+    // The temporary solution is to take the file basename
+    // Easily broken by misnamed ROM archives
+    _driverName = [[path lastPathComponent] stringByDeletingPathExtension];
+
     astring err;
     emu_options options = emu_options();
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
-    
+
     game_driver driver;
-    driver_enumerator drivlist(options, "robotron");
-	media_auditor auditor(drivlist);
+    driver_enumerator drivlist(options, [_driverName UTF8String]);
+    media_auditor auditor(drivlist);
 
     BOOL verified = NO;
-	while (drivlist.next() && !verified) {
-		media_auditor::summary summary = auditor.audit_media(AUDIT_VALIDATE_FAST);
+    while (drivlist.next() && !verified) {
+        media_auditor::summary summary = auditor.audit_media(AUDIT_VALIDATE_FAST);
         if (summary == media_auditor::CORRECT) {
             driver = drivlist.driver();
             verified = YES;
         }
-	}
+    }
     
     return verified;
 }
@@ -169,8 +174,8 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
     emu_options options = emu_options();
     options.set_value(OPTION_AUTOFRAMESKIP, false, OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SAMPLERATE, (int)_sampleRate, OPTION_PRIORITY_HIGH, err);
-    if (_romDir) options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
-    options.set_value(OPTION_SYSTEMNAME, "robotron", OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
 
     osx_osd_interface interface = osx_osd_interface(self);
 
@@ -206,7 +211,6 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
     // Only wait for 5 frames or so maximum
     int status = osd_event_wait(_renderEvent, 5 * (osd_ticks_per_second() / self.frameInterval));
     if (status == FALSE) return;
-
     
     // For some reason, getting the primitives triggers an exception
     // Something to do with the y bounds of a quad primitve being NaN...
