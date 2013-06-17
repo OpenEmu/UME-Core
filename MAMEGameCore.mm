@@ -148,6 +148,15 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
     [super stopEmulation];
 }
 
+- (void)setPauseEmulation:(BOOL)pauseEmulation {
+    if (_machine != NULL) {
+        if (pauseEmulation) _machine->pause();
+        else _machine->resume();
+    }
+
+    [super setPauseEmulation:pauseEmulation];
+}
+
 - (void)resetEmulation {
     if (_machine != NULL) _machine->schedule_hard_reset();
 }
