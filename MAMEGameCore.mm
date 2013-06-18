@@ -41,6 +41,8 @@
 @interface MAMEGameCore () <OEArcadeSystemResponderClient> {
     running_machine *_machine;
     render_target *_target;
+    INT32 _buttons[OEArcadeButtonCount];
+    INT32 _axes[INPUT_MAX_AXIS];
     osd_event *_renderEvent;
 
     NSString *_romDir;
@@ -110,6 +112,18 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     _target->compute_minimum_size(width, height);
     if (width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
     _target->set_bounds(_bufferSize.width, _bufferSize.height);
+
+    input_device *input = _machine->input().device_class(DEVICE_CLASS_JOYSTICK).add_device("OpenEmu", NULL);
+    input->add_item("X Axis", ITEM_ID_XAXIS, joystick_get_state, &_axes[0]);
+    input->add_item("Y Axis", ITEM_ID_YAXIS, joystick_get_state, &_axes[1]);
+    input->add_item("Start", ITEM_ID_START, joystick_get_state, &_buttons[OEArcadeButtonP1Start]);
+    input->add_item("Select", ITEM_ID_SELECT, joystick_get_state, &_buttons[OEArcadeButtonInsertCoin]);
+    input->add_item("Button 1", ITEM_ID_BUTTON1, joystick_get_state, &_buttons[OEArcadeButton1]);
+    input->add_item("Button 2", ITEM_ID_BUTTON2, joystick_get_state, &_buttons[OEArcadeButton2]);
+    input->add_item("Button 3", ITEM_ID_BUTTON3, joystick_get_state, &_buttons[OEArcadeButton3]);
+    input->add_item("Button 4", ITEM_ID_BUTTON4, joystick_get_state, &_buttons[OEArcadeButton4]);
+    input->add_item("Button 5", ITEM_ID_BUTTON5, joystick_get_state, &_buttons[OEArcadeButton5]);
+    input->add_item("Button 6", ITEM_ID_BUTTON6, joystick_get_state, &_buttons[OEArcadeButton6]);
 }
 
 - (void)osd_exit:(running_machine *)machine {
@@ -273,12 +287,18 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
 #pragma mark - Input
 
+- (void)setState:(BOOL)pressed ofButton:(OEArcadeButton)button forPlayer:(NSUInteger)player {
+    _buttons[button] = pressed ? 1 : 0;
+    _axes[0] = _buttons[OEArcadeButtonLeft] ? INPUT_ABSOLUTE_MIN : (_buttons[OEArcadeButtonRight] ? INPUT_ABSOLUTE_MAX : 0);
+    _axes[1] = _buttons[OEArcadeButtonUp] ? INPUT_ABSOLUTE_MIN : (_buttons[OEArcadeButtonDown] ? INPUT_ABSOLUTE_MAX : 0);
+}
+
 - (oneway void)didPushArcadeButton:(OEArcadeButton)button forPlayer:(NSUInteger)player {
-    
+    [self setState:YES ofButton:button forPlayer:player];
 }
 
 - (oneway void)didReleaseArcadeButton:(OEArcadeButton)button forPlayer:(NSUInteger)player {
-    
+    [self setState:NO ofButton:button forPlayer:player];
 }
 
 #pragma mark - Save State
