@@ -60,16 +60,21 @@ static void mame_did_exit(running_machine *machine) {
     [interface.core() osd_exit:machine];
 }
 
+static INT32 joystick_get_state(void *device_internal, void *item_internal) {
+    return *(INT32 *)item_internal;
+}
+
 @implementation MAMEGameCore
 
 #pragma mark - Lifecycle
 
 + (void)initialize {
-    mame_set_output_channel(OUTPUT_CHANNEL_LOG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
     mame_set_output_channel(OUTPUT_CHANNEL_ERROR, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
     mame_set_output_channel(OUTPUT_CHANNEL_WARNING, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
     mame_set_output_channel(OUTPUT_CHANNEL_INFO, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
     mame_set_output_channel(OUTPUT_CHANNEL_DEBUG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
+    mame_set_output_channel(OUTPUT_CHANNEL_VERBOSE, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
+    mame_set_output_channel(OUTPUT_CHANNEL_LOG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
 }
 
 - (id)init {
@@ -124,7 +129,6 @@ static void mame_did_exit(running_machine *machine) {
     if (!_romDir) return NO;
 
     // Need a better way to identify the ROM driver from the archive path
-    // Currently the rom is hardcoded to "robotron"
 
     // The code below works by hashing the individual files and checking each
     // but takes *forever* and does not scale at O(n)
@@ -184,21 +188,21 @@ static void mame_did_exit(running_machine *machine) {
 
 - (void)mameEmuThread {
     astring err;
-    
-    // Note that the game name is also hardcoded here
 
     emu_options options = emu_options();
-    options.set_value(OPTION_AUTOFRAMESKIP, false, OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SAMPLERATE, (int)_sampleRate, OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
+#ifdef DEBUG
+    options.set_value(OPTION_VERBOSE, true, OPTION_PRIORITY_HIGH, err);
+#endif
 
     osx_osd_interface interface = osx_osd_interface(self);
 
     NSLog(@"MAME: Starting game execution thread");
     
     mame_execute(options, interface);
-    
+
     NSLog(@"MAME: Game execution thread exiting");
 }
 
@@ -217,7 +221,6 @@ static void mame_did_exit(running_machine *machine) {
 }
 
 - (void)osd_update:(bool)skip_redraw {
-    NSLog(@"Updating");
     osd_event_set(_renderEvent);
 }
 
@@ -236,7 +239,6 @@ static void mame_did_exit(running_machine *machine) {
     
     // Here we want to draw each primitive in using the OpenGL context
     // See the MAME-OSX project by Dave Dribin for more on this
-    NSLog(@"Rendering");
     
     //primitives.release_lock();
 }
