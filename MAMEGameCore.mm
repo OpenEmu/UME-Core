@@ -55,6 +55,11 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
     NSLog(@"MAME: %@", [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:argptr]);
 }
 
+static void mame_did_exit(running_machine *machine) {
+    osx_osd_interface &interface = dynamic_cast<osx_osd_interface &>(machine->osd());
+    [interface.core() osd_exit:machine];
+}
+
 @implementation MAMEGameCore
 
 #pragma mark - Lifecycle
@@ -89,6 +94,8 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
 - (void)osd_init:(running_machine *)machine {
     _machine = machine;
 
+    _machine->add_notifier(MACHINE_NOTIFY_EXIT, machine_notify_delegate(FUNC(mame_did_exit), machine));
+
     _target = _machine->render().target_alloc();
     _target->set_orientation(ROT0);
     _target->set_max_update_rate(self.frameInterval);
@@ -97,7 +104,16 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
     INT32 width, height;
     _target->compute_minimum_size(width, height);
     if (width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
-    _target->set_bounds(_bufferSize.width, _bufferSize.height, _bufferSize.width/_bufferSize.height);
+    _target->set_bounds(_bufferSize.width, _bufferSize.height);
+}
+
+- (void)osd_exit:(running_machine *)machine {
+    NSParameterAssert(_machine == machine);
+
+    _machine->render().target_free(_target);
+    _target = NULL;
+
+    _machine = NULL;
 }
 
 #pragma mark - Execution

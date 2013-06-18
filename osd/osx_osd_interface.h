@@ -32,6 +32,7 @@ class osx_osd_interface : public osd_interface
 {
 public:
     osx_osd_interface(MAMEGameCore *);
+    MAMEGameCore *core() const { return m_core; }
     void init(running_machine &machine);
     void update(bool skip_redraw);
     void update_audio_stream(const INT16 *buffer, int samples_this_frame);
