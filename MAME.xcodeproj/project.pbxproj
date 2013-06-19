@@ -2357,6 +2357,7 @@
 		D04C06FB176B4E1700E8C84C /* vooddefs.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE590176385BA00759E26 /* vooddefs.h */; };
 		D04C06FC176B4E1700E8C84C /* voodoo.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE591176385BA00759E26 /* voodoo.c */; };
 		D04C06FD176B4E1700E8C84C /* voodoo.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE592176385BA00759E26 /* voodoo.h */; };
+		D05447361770F7F400225294 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05447351770F7F300225294 /* OpenGL.framework */; };
 		D058BBFD176448B300D95533 /* pmmac.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE74F176385BB00759E26 /* pmmac.c */; };
 		D058BBFE176448B300D95533 /* pmmac.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE750176385BB00759E26 /* pmmac.h */; };
 		D058BBFF176448B300D95533 /* pmmacosxcm.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE751176385BB00759E26 /* pmmacosxcm.c */; };
@@ -5025,6 +5026,7 @@
 		D02C501017643ABA00BFDCFE /* libformats.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libformats.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D04050D1176A631200E4D36B /* libmachine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmachine.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D04C0683176B4D2D00E8C84C /* libvideo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvideo.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D05447351770F7F300225294 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		D058BC0D1764498E00D95533 /* MAMEEmu_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MAMEEmu_Prefix.pch; sourceTree = "<group>"; };
 		D058BC2D17644B1400D95533 /* libsound.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsound.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0590C2F176D7BB700211038 /* redbaron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = redbaron.h; path = ../../../../../../../Downloads/mame_149/src/mame/audio/redbaron.h; sourceTree = "<group>"; };
@@ -11144,6 +11146,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D05447361770F7F400225294 /* OpenGL.framework in Frameworks */,
 				D0ECAC74176CED5C008A89A8 /* liblua.a in Frameworks */,
 				D04C0689176B4D5500E8C84C /* libvideo.a in Frameworks */,
 				D0AFD40A176AC95D00AF9B18 /* libmachine.a in Frameworks */,
@@ -11379,6 +11382,7 @@
 			isa = PBXGroup;
 			children = (
 				D00A068D1763763000C99008 /* Cocoa.framework */,
+				D05447351770F7F300225294 /* OpenGL.framework */,
 				D0EBBE9D17655D49007C4010 /* CoreAudio.framework */,
 				D0EBBE9A17655C6B007C4010 /* CoreMIDI.framework */,
 			);

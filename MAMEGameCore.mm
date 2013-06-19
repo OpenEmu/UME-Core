@@ -104,14 +104,17 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     _machine->add_notifier(MACHINE_NOTIFY_EXIT, machine_notify_delegate(FUNC(mame_did_exit), machine));
 
     _target = _machine->render().target_alloc();
-    _target->set_orientation(ROT0);
     _target->set_max_update_rate(self.frameInterval);
-    _target->set_view(0);
 
     INT32 width, height;
     _target->compute_minimum_size(width, height);
     if (width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
     _target->set_bounds(_bufferSize.width, _bufferSize.height);
+
+    // TODO: Fix UI rendering bug
+    // This is a temporary fix to disable UI (causes a crash normally)
+    render_target *uitarget = _machine->render().target_alloc();
+    _target->manager().set_ui_target(*uitarget);
 
     input_device *input = _machine->input().device_class(DEVICE_CLASS_JOYSTICK).add_device("OpenEmu", NULL);
     input->add_item("X Axis", ITEM_ID_XAXIS, joystick_get_state, &_axes[0]);
@@ -244,17 +247,95 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     // Only wait for 5 frames or so maximum
     int status = osd_event_wait(_renderEvent, 5 * (osd_ticks_per_second() / self.frameInterval));
     if (status == FALSE) return;
-    
-    // For some reason, getting the primitives triggers an exception
-    // Something to do with the y bounds of a quad primitve being NaN...
 
-    //render_primitive_list &primitives = _target->get_primitives();
-    //primitives.acquire_lock();
+    render_primitive_list &primitives = _target->get_primitives();
+    primitives.acquire_lock();
     
-    // Here we want to draw each primitive in using the OpenGL context
-    // See the MAME-OSX project by Dave Dribin for more on this
+    glShadeModel(GL_SMOOTH);
+
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    glDisable(GL_DEPTH_TEST);
+    glClearDepth(1.0f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // set lines and points just barely above normal size to get proper results
+    glLineWidth(1.1f);
+    glPointSize(1.1f);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_POINT_SMOOTH);
+
+    glViewport(0.0, 0.0, (GLsizei)_bufferSize.width, (GLsizei)_bufferSize.height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0, (GLdouble)_bufferSize.width, (GLdouble)_bufferSize.height, 0.0, 0.0, -1.0);
+
+    int count = 0;
+    for (render_primitive *prim = primitives.first(); prim != NULL; prim = prim->next()) {
+        count++;
+        GLfloat color[4];
+        color[0] = prim->color.r;
+        color[1] = prim->color.g;
+        color[2] = prim->color.b;
+        color[3] = prim->color.a;
+
+        switch (PRIMFLAG_GET_BLENDMODE(prim->flags)) {
+            case BLENDMODE_NONE:
+                glDisable(GL_BLEND);
+                break;
+            case BLENDMODE_ALPHA:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            case BLENDMODE_RGB_MULTIPLY:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_DST_COLOR, GL_ZERO);
+                break;
+            case BLENDMODE_ADD:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                break;
+            default:
+                break;
+        }
+
+        switch (prim->type) {
+            case render_primitive::LINE: {
+                BOOL isLine = ((prim->bounds.x1 != prim->bounds.x0) || (prim->bounds.y1 != prim->bounds.y0));
+                glBegin(isLine ? GL_LINES : GL_POINTS);
+                glColor4fv(color);
+                glVertex2f(prim->bounds.x0, prim->bounds.y0);
+                if (isLine) glVertex2f(prim->bounds.x1, prim->bounds.y1);
+                glEnd();
+
+                break;
+            }
+
+            case render_primitive::QUAD: {
+                glBegin(GL_QUADS);
+                glColor4fv(color);
+                glVertex2f(prim->bounds.x0, prim->bounds.y0);
+                glColor4fv(color);
+                glVertex2f(prim->bounds.x1, prim->bounds.y0);
+                glColor4fv(color);
+                glVertex2f(prim->bounds.x1, prim->bounds.y1);
+                glColor4fv(color);
+                glVertex2f(prim->bounds.x0, prim->bounds.y1);
+                glEnd();
+
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
     
-    //primitives.release_lock();
+    NSLog(@"Rendering primitives! %i", count);
+    
+    primitives.release_lock();
 }
 
 - (void)executeFrame {
