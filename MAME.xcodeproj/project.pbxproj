@@ -1953,6 +1953,12 @@
 		D02C500917643AA400BFDCFE /* zconf.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE7C9176385BB00759E26 /* zconf.h */; };
 		D02C500A17643AA400BFDCFE /* zlib.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE7CB176385BB00759E26 /* zlib.h */; };
 		D02C500B17643AA400BFDCFE /* zutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE7CD176385BB00759E26 /* zutil.h */; };
+		D02FBDA11773D59200C518DF /* redbaron.h in Headers */ = {isa = PBXBuildFile; fileRef = D02FBDA01773D59200C518DF /* redbaron.h */; };
+		D02FBDA31773D5A200C518DF /* warpwarp.h in Headers */ = {isa = PBXBuildFile; fileRef = D02FBDA21773D5A200C518DF /* warpwarp.h */; };
+		D02FBDA61773D5D600C518DF /* powervr2.c in Sources */ = {isa = PBXBuildFile; fileRef = D02FBDA41773D5D500C518DF /* powervr2.c */; };
+		D02FBDA71773D5D600C518DF /* powervr2.h in Headers */ = {isa = PBXBuildFile; fileRef = D02FBDA51773D5D500C518DF /* powervr2.h */; };
+		D02FBDAA1773D5EC00C518DF /* tecmo_spr.c in Sources */ = {isa = PBXBuildFile; fileRef = D02FBDA81773D5EC00C518DF /* tecmo_spr.c */; };
+		D02FBDAB1773D5EC00C518DF /* tecmo_spr.h in Headers */ = {isa = PBXBuildFile; fileRef = D02FBDA91773D5EC00C518DF /* tecmo_spr.h */; };
 		D03AEDEA176A6410009742C6 /* 53c7xx.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE2D0176385B600759E26 /* 53c7xx.c */; };
 		D03AEDEB176A6410009742C6 /* 53c7xx.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE2D1176385B600759E26 /* 53c7xx.h */; };
 		D03AEDEC176A6410009742C6 /* 53c810.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE2D2176385B600759E26 /* 53c810.c */; };
@@ -2374,37 +2380,6 @@
 		D058BC0A176448D400D95533 /* ptmacosx_mach.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE75E176385BB00759E26 /* ptmacosx_mach.c */; };
 		D058BC0B176448D400D95533 /* readbinaryplist.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE760176385BB00759E26 /* readbinaryplist.c */; };
 		D058BC0C176448D400D95533 /* readbinaryplist.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE761176385BB00759E26 /* readbinaryplist.h */; };
-		D0590C30176D7BB700211038 /* redbaron.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C2F176D7BB700211038 /* redbaron.h */; };
-		D0590C32176D7BE000211038 /* warpwarp.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C31176D7BE000211038 /* warpwarp.h */; };
-		D0590C35176D7C2500211038 /* 24cdjuke.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C33176D7C1C00211038 /* 24cdjuke.c */; };
-		D0590C37176D7C5B00211038 /* dreambal.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C36176D7C5B00211038 /* dreambal.c */; };
-		D0590C39176D7C7700211038 /* fresh.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C38176D7C7700211038 /* fresh.c */; };
-		D0590C3B176D7C8700211038 /* fruitpc.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C3A176D7C8700211038 /* fruitpc.c */; };
-		D0590C3D176D7CA000211038 /* gambl186.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C3C176D7CA000211038 /* gambl186.c */; };
-		D0590C3F176D7CB700211038 /* gluck2.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C3E176D7CB700211038 /* gluck2.c */; };
-		D0590C41176D7CCF00211038 /* igs_m036.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C40176D7CCF00211038 /* igs_m036.c */; };
-		D0590C43176D7D1500211038 /* iteagle.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C42176D7D1500211038 /* iteagle.c */; };
-		D0590C45176D7D3400211038 /* pinball2k.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C44176D7D3400211038 /* pinball2k.c */; };
-		D0590C47176D7D4B00211038 /* sanremo.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C46176D7D4B00211038 /* sanremo.c */; };
-		D0590C49176D7DEF00211038 /* seabattl.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C48176D7DEF00211038 /* seabattl.c */; };
-		D0590C4B176D7E0500211038 /* smsmcorp.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C4A176D7E0500211038 /* smsmcorp.c */; };
-		D0590C4D176D7E1A00211038 /* stuntair.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C4C176D7E1A00211038 /* stuntair.c */; };
-		D0590C4F176D7E3500211038 /* wmg.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C4E176D7E3500211038 /* wmg.c */; };
-		D0590C51176D7F4F00211038 /* decathlt.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C50176D7F4F00211038 /* decathlt.c */; };
-		D0590C53176D7F6400211038 /* kabuki.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C52176D7F6400211038 /* kabuki.h */; };
-		D0590C56176D7F9900211038 /* midikbd.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C54176D7F9900211038 /* midikbd.c */; };
-		D0590C57176D7F9900211038 /* midikbd.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C55176D7F9900211038 /* midikbd.h */; };
-		D0590C5A176D7FA800211038 /* mpeg573.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C58176D7FA800211038 /* mpeg573.c */; };
-		D0590C5B176D7FA800211038 /* mpeg573.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C59176D7FA800211038 /* mpeg573.h */; };
-		D0590C5E176D7FD300211038 /* naomicrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C5C176D7FD300211038 /* naomicrypt.c */; };
-		D0590C5F176D7FD300211038 /* naomicrypt.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C5D176D7FD300211038 /* naomicrypt.h */; };
-		D0590C62176D7FEF00211038 /* ns11prot.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C60176D7FEF00211038 /* ns11prot.c */; };
-		D0590C63176D7FEF00211038 /* ns11prot.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C61176D7FEF00211038 /* ns11prot.h */; };
-		D0590C65176D7FFE00211038 /* pcshare.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C64176D7FFE00211038 /* pcshare.h */; };
-		D0590C68176D802C00211038 /* powervr2.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C66176D802C00211038 /* powervr2.c */; };
-		D0590C69176D802C00211038 /* powervr2.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C67176D802C00211038 /* powervr2.h */; };
-		D0590C6C176D805500211038 /* tecmo_spr.c in Sources */ = {isa = PBXBuildFile; fileRef = D0590C6A176D805500211038 /* tecmo_spr.c */; };
-		D0590C6D176D805500211038 /* tecmo_spr.h in Headers */ = {isa = PBXBuildFile; fileRef = D0590C6B176D805500211038 /* tecmo_spr.h */; };
 		D0590C70176D83B900211038 /* stv.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAEC79176385C200759E26 /* stv.c */; };
 		D089ACA0176A217E0007543B /* arm7tdrc.c in Sources */ = {isa = PBXBuildFile; fileRef = D089AC9E176A217E0007543B /* arm7tdrc.c */; };
 		D089ACA4176A21B50007543B /* es5510.c in Sources */ = {isa = PBXBuildFile; fileRef = D089ACA2176A21B50007543B /* es5510.c */; };
@@ -4643,6 +4618,31 @@
 		D0E3E23B176447AE00FAEE5B /* jquant2.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE740176385BB00759E26 /* jquant2.c */; };
 		D0E3E23C176447AE00FAEE5B /* jutils.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE741176385BB00759E26 /* jutils.c */; };
 		D0E3E23D176447AE00FAEE5B /* jversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE742176385BB00759E26 /* jversion.h */; };
+		D0E522E61773C48C00F646BE /* 24cdjuke.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522E51773C48C00F646BE /* 24cdjuke.c */; };
+		D0E522E81773C4A800F646BE /* dreambal.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522E71773C4A800F646BE /* dreambal.c */; };
+		D0E522EA1773C4B900F646BE /* fresh.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522E91773C4B900F646BE /* fresh.c */; };
+		D0E522EC1773C4C400F646BE /* fruitpc.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522EB1773C4C400F646BE /* fruitpc.c */; };
+		D0E522EE1773C4DA00F646BE /* gambl186.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522ED1773C4DA00F646BE /* gambl186.c */; };
+		D0E522F01773C4E300F646BE /* gluck2.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522EF1773C4E300F646BE /* gluck2.c */; };
+		D0E522F21773C4F100F646BE /* igs_m036.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522F11773C4F100F646BE /* igs_m036.c */; };
+		D0E522F41773C4FC00F646BE /* iteagle.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522F31773C4FC00F646BE /* iteagle.c */; };
+		D0E522F61773C50D00F646BE /* pinball2k.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522F51773C50D00F646BE /* pinball2k.c */; };
+		D0E522F81773C51E00F646BE /* sanremo.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522F71773C51E00F646BE /* sanremo.c */; };
+		D0E522FA1773C52800F646BE /* seabattl.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522F91773C52800F646BE /* seabattl.c */; };
+		D0E522FC1773C53400F646BE /* smsmcorp.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522FB1773C53400F646BE /* smsmcorp.c */; };
+		D0E522FE1773C55200F646BE /* stuntair.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522FD1773C55200F646BE /* stuntair.c */; };
+		D0E523001773C56800F646BE /* wmg.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E522FF1773C56800F646BE /* wmg.c */; };
+		D0E523A71773C73000F646BE /* decathlt.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E523011773C5CD00F646BE /* decathlt.c */; };
+		D0E523A81773C73000F646BE /* kabuki.h in Headers */ = {isa = PBXBuildFile; fileRef = D0E523031773C61E00F646BE /* kabuki.h */; };
+		D0E523A91773C73000F646BE /* midikbd.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E523051773C66300F646BE /* midikbd.c */; };
+		D0E523AA1773C73000F646BE /* midikbd.h in Headers */ = {isa = PBXBuildFile; fileRef = D0E523061773C66300F646BE /* midikbd.h */; };
+		D0E523AB1773C73000F646BE /* mpeg573.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E523091773C66F00F646BE /* mpeg573.c */; };
+		D0E523D61773C75100F646BE /* mpeg573.h in Headers */ = {isa = PBXBuildFile; fileRef = D0E5230A1773C66F00F646BE /* mpeg573.h */; };
+		D0E523D71773C75100F646BE /* naomicrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E5230D1773C67D00F646BE /* naomicrypt.c */; };
+		D0E523D81773C75100F646BE /* naomicrypt.h in Headers */ = {isa = PBXBuildFile; fileRef = D0E5230E1773C67D00F646BE /* naomicrypt.h */; };
+		D0E523D91773C75100F646BE /* ns11prot.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E523111773C68800F646BE /* ns11prot.c */; };
+		D0E523DA1773C75100F646BE /* ns11prot.h in Headers */ = {isa = PBXBuildFile; fileRef = D0E523121773C68800F646BE /* ns11prot.h */; };
+		D0E524031773C75D00F646BE /* pcshare.h in Headers */ = {isa = PBXBuildFile; fileRef = D0E523151773C69200F646BE /* pcshare.h */; };
 		D0EBBE88176531FD007C4010 /* libcpu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0AAFF7B1763B87B00759E26 /* libcpu.a */; };
 		D0EBBE89176531FD007C4010 /* libemu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E184381763F57E00D0C94F /* libemu.a */; };
 		D0EBBE8A176531FD007C4010 /* libexpat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D090D7CB17643DCA004DC3EB /* libexpat.a */; };
@@ -5024,42 +5024,17 @@
 		D0264B7B176A96F800717B6C /* sanremo.lay */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = sanremo.lay; sourceTree = "<group>"; };
 		D0264B7C176A971B00717B6C /* speedbal.lay */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = speedbal.lay; sourceTree = "<group>"; };
 		D02C501017643ABA00BFDCFE /* libformats.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libformats.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D02FBDA01773D59200C518DF /* redbaron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = redbaron.h; sourceTree = "<group>"; };
+		D02FBDA21773D5A200C518DF /* warpwarp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = warpwarp.h; sourceTree = "<group>"; };
+		D02FBDA41773D5D500C518DF /* powervr2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = powervr2.c; sourceTree = "<group>"; };
+		D02FBDA51773D5D500C518DF /* powervr2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = powervr2.h; sourceTree = "<group>"; };
+		D02FBDA81773D5EC00C518DF /* tecmo_spr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tecmo_spr.c; sourceTree = "<group>"; };
+		D02FBDA91773D5EC00C518DF /* tecmo_spr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tecmo_spr.h; sourceTree = "<group>"; };
 		D04050D1176A631200E4D36B /* libmachine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmachine.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D04C0683176B4D2D00E8C84C /* libvideo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvideo.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D05447351770F7F300225294 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		D058BC0D1764498E00D95533 /* MAMEEmu_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MAMEEmu_Prefix.pch; sourceTree = "<group>"; };
 		D058BC2D17644B1400D95533 /* libsound.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsound.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		D0590C2F176D7BB700211038 /* redbaron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = redbaron.h; path = ../../../../../../../Downloads/mame_149/src/mame/audio/redbaron.h; sourceTree = "<group>"; };
-		D0590C31176D7BE000211038 /* warpwarp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = warpwarp.h; path = ../../../../../../../Downloads/mame_149/src/mame/audio/warpwarp.h; sourceTree = "<group>"; };
-		D0590C33176D7C1C00211038 /* 24cdjuke.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = 24cdjuke.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/24cdjuke.c; sourceTree = "<group>"; };
-		D0590C36176D7C5B00211038 /* dreambal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dreambal.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/dreambal.c; sourceTree = "<group>"; };
-		D0590C38176D7C7700211038 /* fresh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fresh.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/fresh.c; sourceTree = "<group>"; };
-		D0590C3A176D7C8700211038 /* fruitpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fruitpc.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/fruitpc.c; sourceTree = "<group>"; };
-		D0590C3C176D7CA000211038 /* gambl186.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gambl186.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/gambl186.c; sourceTree = "<group>"; };
-		D0590C3E176D7CB700211038 /* gluck2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gluck2.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/gluck2.c; sourceTree = "<group>"; };
-		D0590C40176D7CCF00211038 /* igs_m036.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = igs_m036.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/igs_m036.c; sourceTree = "<group>"; };
-		D0590C42176D7D1500211038 /* iteagle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = iteagle.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/iteagle.c; sourceTree = "<group>"; };
-		D0590C44176D7D3400211038 /* pinball2k.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pinball2k.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/pinball2k.c; sourceTree = "<group>"; };
-		D0590C46176D7D4B00211038 /* sanremo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sanremo.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/sanremo.c; sourceTree = "<group>"; };
-		D0590C48176D7DEF00211038 /* seabattl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = seabattl.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/seabattl.c; sourceTree = "<group>"; };
-		D0590C4A176D7E0500211038 /* smsmcorp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smsmcorp.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/smsmcorp.c; sourceTree = "<group>"; };
-		D0590C4C176D7E1A00211038 /* stuntair.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stuntair.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/stuntair.c; sourceTree = "<group>"; };
-		D0590C4E176D7E3500211038 /* wmg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wmg.c; path = ../../../../../../../Downloads/mame_149/src/mame/drivers/wmg.c; sourceTree = "<group>"; };
-		D0590C50176D7F4F00211038 /* decathlt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = decathlt.c; path = ../../../../../../../Downloads/mame_149/src/mame/machine/decathlt.c; sourceTree = "<group>"; };
-		D0590C52176D7F6400211038 /* kabuki.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kabuki.h; path = ../../../../../../../Downloads/mame_149/src/mame/machine/kabuki.h; sourceTree = "<group>"; };
-		D0590C54176D7F9900211038 /* midikbd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midikbd.c; path = ../../../../../../../Downloads/mame_149/src/mame/machine/midikbd.c; sourceTree = "<group>"; };
-		D0590C55176D7F9900211038 /* midikbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midikbd.h; path = ../../../../../../../Downloads/mame_149/src/mame/machine/midikbd.h; sourceTree = "<group>"; };
-		D0590C58176D7FA800211038 /* mpeg573.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpeg573.c; path = ../../../../../../../Downloads/mame_149/src/mame/machine/mpeg573.c; sourceTree = "<group>"; };
-		D0590C59176D7FA800211038 /* mpeg573.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpeg573.h; path = ../../../../../../../Downloads/mame_149/src/mame/machine/mpeg573.h; sourceTree = "<group>"; };
-		D0590C5C176D7FD300211038 /* naomicrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = naomicrypt.c; path = ../../../../../../../Downloads/mame_149/src/mame/machine/naomicrypt.c; sourceTree = "<group>"; };
-		D0590C5D176D7FD300211038 /* naomicrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = naomicrypt.h; path = ../../../../../../../Downloads/mame_149/src/mame/machine/naomicrypt.h; sourceTree = "<group>"; };
-		D0590C60176D7FEF00211038 /* ns11prot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ns11prot.c; path = ../../../../../../../Downloads/mame_149/src/mame/machine/ns11prot.c; sourceTree = "<group>"; };
-		D0590C61176D7FEF00211038 /* ns11prot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ns11prot.h; path = ../../../../../../../Downloads/mame_149/src/mame/machine/ns11prot.h; sourceTree = "<group>"; };
-		D0590C64176D7FFE00211038 /* pcshare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcshare.h; path = ../../../../../../../Downloads/mame_149/src/mame/machine/pcshare.h; sourceTree = "<group>"; };
-		D0590C66176D802C00211038 /* powervr2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = powervr2.c; path = ../../../../../../../Downloads/mame_149/src/mame/video/powervr2.c; sourceTree = "<group>"; };
-		D0590C67176D802C00211038 /* powervr2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = powervr2.h; path = ../../../../../../../Downloads/mame_149/src/mame/video/powervr2.h; sourceTree = "<group>"; };
-		D0590C6A176D805500211038 /* tecmo_spr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tecmo_spr.c; path = ../../../../../../../Downloads/mame_149/src/mame/video/tecmo_spr.c; sourceTree = "<group>"; };
-		D0590C6B176D805500211038 /* tecmo_spr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tecmo_spr.h; path = ../../../../../../../Downloads/mame_149/src/mame/video/tecmo_spr.h; sourceTree = "<group>"; };
 		D089AC9D176A217E0007543B /* arm7drc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm7drc.c; sourceTree = "<group>"; };
 		D089AC9E176A217E0007543B /* arm7tdrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm7tdrc.c; sourceTree = "<group>"; };
 		D089ACA2176A21B50007543B /* es5510.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = es5510.c; sourceTree = "<group>"; };
@@ -11058,6 +11033,31 @@
 		D0E185B91764379000D0C94F /* png2bdc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = png2bdc; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0E185CA1764393A00D0C94F /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0E185F6176439CA00D0C94F /* libsoftfloat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsoftfloat.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0E522E51773C48C00F646BE /* 24cdjuke.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 24cdjuke.c; sourceTree = "<group>"; };
+		D0E522E71773C4A800F646BE /* dreambal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dreambal.c; sourceTree = "<group>"; };
+		D0E522E91773C4B900F646BE /* fresh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fresh.c; sourceTree = "<group>"; };
+		D0E522EB1773C4C400F646BE /* fruitpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fruitpc.c; sourceTree = "<group>"; };
+		D0E522ED1773C4DA00F646BE /* gambl186.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gambl186.c; sourceTree = "<group>"; };
+		D0E522EF1773C4E300F646BE /* gluck2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gluck2.c; sourceTree = "<group>"; };
+		D0E522F11773C4F100F646BE /* igs_m036.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = igs_m036.c; sourceTree = "<group>"; };
+		D0E522F31773C4FC00F646BE /* iteagle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iteagle.c; sourceTree = "<group>"; };
+		D0E522F51773C50D00F646BE /* pinball2k.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pinball2k.c; sourceTree = "<group>"; };
+		D0E522F71773C51E00F646BE /* sanremo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sanremo.c; sourceTree = "<group>"; };
+		D0E522F91773C52800F646BE /* seabattl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = seabattl.c; sourceTree = "<group>"; };
+		D0E522FB1773C53400F646BE /* smsmcorp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smsmcorp.c; sourceTree = "<group>"; };
+		D0E522FD1773C55200F646BE /* stuntair.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stuntair.c; sourceTree = "<group>"; };
+		D0E522FF1773C56800F646BE /* wmg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wmg.c; sourceTree = "<group>"; };
+		D0E523011773C5CD00F646BE /* decathlt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decathlt.c; sourceTree = "<group>"; };
+		D0E523031773C61E00F646BE /* kabuki.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kabuki.h; sourceTree = "<group>"; };
+		D0E523051773C66300F646BE /* midikbd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = midikbd.c; sourceTree = "<group>"; };
+		D0E523061773C66300F646BE /* midikbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midikbd.h; sourceTree = "<group>"; };
+		D0E523091773C66F00F646BE /* mpeg573.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpeg573.c; sourceTree = "<group>"; };
+		D0E5230A1773C66F00F646BE /* mpeg573.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeg573.h; sourceTree = "<group>"; };
+		D0E5230D1773C67D00F646BE /* naomicrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = naomicrypt.c; sourceTree = "<group>"; };
+		D0E5230E1773C67D00F646BE /* naomicrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = naomicrypt.h; sourceTree = "<group>"; };
+		D0E523111773C68800F646BE /* ns11prot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ns11prot.c; sourceTree = "<group>"; };
+		D0E523121773C68800F646BE /* ns11prot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ns11prot.h; sourceTree = "<group>"; };
+		D0E523151773C69200F646BE /* pcshare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcshare.h; sourceTree = "<group>"; };
 		D0EBBE9A17655C6B007C4010 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		D0EBBE9D17655D49007C4010 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		D0EBBEA517656E7E007C4010 /* makelist */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = makelist; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -13605,7 +13605,7 @@
 				D0AAE82A176385BC00759E26 /* qix.c */,
 				D0AAE82B176385BC00759E26 /* redalert.c */,
 				D0AAE82C176385BC00759E26 /* redbaron.c */,
-				D0590C2F176D7BB700211038 /* redbaron.h */,
+				D02FBDA01773D59200C518DF /* redbaron.h */,
 				D0AAE82D176385BC00759E26 /* scramble.c */,
 				D0AAE82E176385BC00759E26 /* segag80r.c */,
 				D0AAE82F176385BC00759E26 /* segag80v.c */,
@@ -13650,7 +13650,7 @@
 				D0AAE856176385BC00759E26 /* vicdual.c */,
 				D0AAE857176385BC00759E26 /* videopin.c */,
 				D0AAE858176385BC00759E26 /* warpwarp.c */,
-				D0590C31176D7BE000211038 /* warpwarp.h */,
+				D02FBDA21773D5A200C518DF /* warpwarp.h */,
 				D0AAE859176385BC00759E26 /* williams.c */,
 				D0AAE85A176385BC00759E26 /* williams.h */,
 				D0AAE85B176385BC00759E26 /* wiping.c */,
@@ -13668,7 +13668,7 @@
 				D0AAE861176385BC00759E26 /* 1943.c */,
 				D0AAE862176385BC00759E26 /* 1945kiii.c */,
 				D0AAE863176385BC00759E26 /* 20pacgal.c */,
-				D0590C33176D7C1C00211038 /* 24cdjuke.c */,
+				D0E522E51773C48C00F646BE /* 24cdjuke.c */,
 				D0AAE864176385BC00759E26 /* 2mindril.c */,
 				D0AAE865176385BC00759E26 /* 30test.c */,
 				D0AAE866176385BC00759E26 /* 39in1.c */,
@@ -13966,7 +13966,7 @@
 				D0AAE98A176385BD00759E26 /* dorachan.c */,
 				D0AAE98B176385BD00759E26 /* dotrikun.c */,
 				D0AAE98C176385BD00759E26 /* dragrace.c */,
-				D0590C36176D7C5B00211038 /* dreambal.c */,
+				D0E522E71773C4A800F646BE /* dreambal.c */,
 				D0AAE98D176385BD00759E26 /* dreamwld.c */,
 				D0AAE98E176385BD00759E26 /* drgnmst.c */,
 				D0AAE98F176385BD00759E26 /* dribling.c */,
@@ -14032,10 +14032,10 @@
 				D0AAE9CB176385BD00759E26 /* forte2.c */,
 				D0AAE9CC176385BD00759E26 /* fortecar.c */,
 				D0AAE9CD176385BD00759E26 /* freekick.c */,
-				D0590C38176D7C7700211038 /* fresh.c */,
+				D0E522E91773C4B900F646BE /* fresh.c */,
 				D0AAE9CE176385BD00759E26 /* fromanc2.c */,
 				D0AAE9CF176385BD00759E26 /* fromance.c */,
-				D0590C3A176D7C8700211038 /* fruitpc.c */,
+				D0E522EB1773C4C400F646BE /* fruitpc.c */,
 				D0AAE9D0176385BD00759E26 /* funkball.c */,
 				D0AAE9D1176385BD00759E26 /* funkybee.c */,
 				D0AAE9D2176385BD00759E26 /* funkyjet.c */,
@@ -14062,7 +14062,7 @@
 				D0AAE9E7176385BD00759E26 /* galpani3.c */,
 				D0AAE9E8176385BD00759E26 /* galpanic.c */,
 				D0AAE9E9176385BD00759E26 /* galspnbl.c */,
-				D0590C3C176D7CA000211038 /* gambl186.c */,
+				D0E522ED1773C4DA00F646BE /* gambl186.c */,
 				D0AAE9EA176385BD00759E26 /* gamecstl.c */,
 				D0AAE9EB176385BD00759E26 /* gameplan.c */,
 				D0AAE9EC176385BD00759E26 /* gammagic.c */,
@@ -14082,7 +14082,7 @@
 				D0AAE9FA176385BD00759E26 /* glass.c */,
 				D0AAE9FB176385BD00759E26 /* globalfr.c */,
 				D0AAE9FC176385BD00759E26 /* globalvr.c */,
-				D0590C3E176D7CB700211038 /* gluck2.c */,
+				D0E522EF1773C4E300F646BE /* gluck2.c */,
 				D0AAE9FD176385BD00759E26 /* gng.c */,
 				D0AAE9FE176385BD00759E26 /* go2000.c */,
 				D0AAE9FF176385BD00759E26 /* goal92.c */,
@@ -14152,7 +14152,7 @@
 				D0AAEA3F176385BE00759E26 /* igs011.c */,
 				D0AAEA40176385BE00759E26 /* igs017.c */,
 				D0AAEA41176385BE00759E26 /* igs_m027.c */,
-				D0590C40176D7CCF00211038 /* igs_m036.c */,
+				D0E522F11773C4F100F646BE /* igs_m036.c */,
 				D0AAEA42176385BE00759E26 /* igspc.c */,
 				D0AAEA43176385BE00759E26 /* igspoker.c */,
 				D0AAEA44176385BE00759E26 /* ikki.c */,
@@ -14165,7 +14165,7 @@
 				D0AAEA4B176385BE00759E26 /* irobot.c */,
 				D0AAEA4C176385BE00759E26 /* ironhors.c */,
 				D0AAEA4D176385BE00759E26 /* istellar.c */,
-				D0590C42176D7D1500211038 /* iteagle.c */,
+				D0E522F31773C4FC00F646BE /* iteagle.c */,
 				D0AAEA4E176385BE00759E26 /* itech32.c */,
 				D0AAEA4F176385BE00759E26 /* itech8.c */,
 				D0AAEA50176385BE00759E26 /* itgambl2.c */,
@@ -14484,7 +14484,7 @@
 				D0AAEB89176385C000759E26 /* photon.c */,
 				D0AAEB8A176385C000759E26 /* photon2.c */,
 				D0AAEB8B176385C000759E26 /* photoply.c */,
-				D0590C44176D7D3400211038 /* pinball2k.c */,
+				D0E522F51773C50D00F646BE /* pinball2k.c */,
 				D0AAEB8C176385C000759E26 /* pingpong.c */,
 				D0AAEB8D176385C000759E26 /* pinkiri8.c */,
 				D0AAEB8E176385C000759E26 /* pipedrm.c */,
@@ -14592,7 +14592,7 @@
 				D0AAEBF4176385C100759E26 /* safarir.c */,
 				D0AAEBF5176385C100759E26 /* sandscrp.c */,
 				D0AAEBF6176385C100759E26 /* sangho.c */,
-				D0590C46176D7D4B00211038 /* sanremo.c */,
+				D0E522F71773C51E00F646BE /* sanremo.c */,
 				D0AAEBF8176385C100759E26 /* sauro.c */,
 				D0AAEBF9176385C100759E26 /* savquest.c */,
 				D0AAEBFA176385C100759E26 /* sbasketb.c */,
@@ -14604,7 +14604,7 @@
 				D0AAEC00176385C100759E26 /* scramble.c */,
 				D0AAEC01176385C100759E26 /* scregg.c */,
 				D0AAEC02176385C100759E26 /* sderby.c */,
-				D0590C48176D7DEF00211038 /* seabattl.c */,
+				D0E522F91773C52800F646BE /* seabattl.c */,
 				D0AAEC03176385C100759E26 /* seattle.c */,
 				D0AAEC04176385C100759E26 /* segac2.c */,
 				D0AAEC05176385C100759E26 /* segae.c */,
@@ -14664,7 +14664,7 @@
 				D0AAEC3B176385C200759E26 /* sleic.c */,
 				D0AAEC3C176385C200759E26 /* sliver.c */,
 				D0AAEC3D176385C200759E26 /* slotcarn.c */,
-				D0590C4A176D7E0500211038 /* smsmcorp.c */,
+				D0E522FB1773C53400F646BE /* smsmcorp.c */,
 				D0AAEC3F176385C200759E26 /* snesb.c */,
 				D0AAEC40176385C200759E26 /* snk.c */,
 				D0AAEC41176385C200759E26 /* snk6502.c */,
@@ -14723,7 +14723,7 @@
 				D0AAEC76176385C200759E26 /* stfight.c */,
 				D0AAEC77176385C200759E26 /* stlforce.c */,
 				D0AAEC78176385C200759E26 /* strnskil.c */,
-				D0590C4C176D7E1A00211038 /* stuntair.c */,
+				D0E522FD1773C55200F646BE /* stuntair.c */,
 				D0AAEC79176385C200759E26 /* stv.c */,
 				D0AAEC7A176385C200759E26 /* su2000.c */,
 				D0AAEC7B176385C200759E26 /* sub.c */,
@@ -14903,7 +14903,7 @@
 				D0AAED29176385C400759E26 /* wiping.c */,
 				D0AAED2A176385C400759E26 /* witch.c */,
 				D0AAED2B176385C400759E26 /* wiz.c */,
-				D0590C4E176D7E3500211038 /* wmg.c */,
+				D0E522FF1773C56800F646BE /* wmg.c */,
 				D0AAED2C176385C400759E26 /* wms.c */,
 				D0AAED2D176385C400759E26 /* wolfpack.c */,
 				D0AAED2E176385C400759E26 /* wpc_95.c */,
@@ -15971,7 +15971,7 @@
 				D0AAF148176385CB00759E26 /* dc-ctrl.h */,
 				D0AAF149176385CB00759E26 /* dc.c */,
 				D0AAF14A176385CB00759E26 /* dec0.c */,
-				D0590C50176D7F4F00211038 /* decathlt.c */,
+				D0E523011773C5CD00F646BE /* decathlt.c */,
 				D0AAF14B176385CB00759E26 /* deco102.c */,
 				D0AAF14C176385CB00759E26 /* deco156.c */,
 				D0AAF14D176385CB00759E26 /* deco222.c */,
@@ -16015,7 +16015,7 @@
 				D0AAF173176385CB00759E26 /* k573cass.c */,
 				D0AAF174176385CB00759E26 /* k573cass.h */,
 				D0AAF175176385CB00759E26 /* kabuki.c */,
-				D0590C52176D7F6400211038 /* kabuki.h */,
+				D0E523031773C61E00F646BE /* kabuki.h */,
 				D0AAF176176385CB00759E26 /* kaneko_calc3.c */,
 				D0AAF177176385CB00759E26 /* kaneko_calc3.h */,
 				D0AAF178176385CB00759E26 /* kaneko_hit.c */,
@@ -16057,8 +16057,8 @@
 				D0AAF19E176385CC00759E26 /* mexico86.c */,
 				D0AAF19F176385CC00759E26 /* mhavoc.c */,
 				D0AAF1A0176385CC00759E26 /* micro3d.c */,
-				D0590C54176D7F9900211038 /* midikbd.c */,
-				D0590C55176D7F9900211038 /* midikbd.h */,
+				D0E523051773C66300F646BE /* midikbd.c */,
+				D0E523061773C66300F646BE /* midikbd.h */,
 				D0AAF1A1176385CC00759E26 /* midtunit.c */,
 				D0AAF1A2176385CC00759E26 /* midwayic.c */,
 				D0AAF1A3176385CC00759E26 /* midwayic.h */,
@@ -16069,8 +16069,8 @@
 				D0AAF1A8176385CC00759E26 /* mie.h */,
 				D0AAF1A9176385CC00759E26 /* model1.c */,
 				D0AAF1AA176385CC00759E26 /* model3.c */,
-				D0590C58176D7FA800211038 /* mpeg573.c */,
-				D0590C59176D7FA800211038 /* mpeg573.h */,
+				D0E523091773C66F00F646BE /* mpeg573.c */,
+				D0E5230A1773C66F00F646BE /* mpeg573.h */,
 				D0AAF1AB176385CC00759E26 /* mw8080bw.c */,
 				D0AAF1AC176385CC00759E26 /* n64.c */,
 				D0AAF1AD176385CC00759E26 /* namco06.c */,
@@ -16091,8 +16091,8 @@
 				D0AAF1BC176385CC00759E26 /* naomi.c */,
 				D0AAF1BD176385CC00759E26 /* naomibd.c */,
 				D0AAF1BE176385CC00759E26 /* naomibd.h */,
-				D0590C5C176D7FD300211038 /* naomicrypt.c */,
-				D0590C5D176D7FD300211038 /* naomicrypt.h */,
+				D0E5230D1773C67D00F646BE /* naomicrypt.c */,
+				D0E5230E1773C67D00F646BE /* naomicrypt.h */,
 				D0AAF1BF176385CC00759E26 /* naomig1.c */,
 				D0AAF1C0176385CC00759E26 /* naomig1.h */,
 				D0AAF1C1176385CC00759E26 /* naomigd.c */,
@@ -16115,15 +16115,15 @@
 				D0AAF1D2176385CC00759E26 /* nmk004.h */,
 				D0AAF1D3176385CC00759E26 /* nmk112.c */,
 				D0AAF1D4176385CC00759E26 /* nmk112.h */,
-				D0590C60176D7FEF00211038 /* ns11prot.c */,
-				D0590C61176D7FEF00211038 /* ns11prot.h */,
+				D0E523111773C68800F646BE /* ns11prot.c */,
+				D0E523121773C68800F646BE /* ns11prot.h */,
 				D0AAF1D5176385CC00759E26 /* nycaptor.c */,
 				D0AAF1D6176385CC00759E26 /* opwolf.c */,
 				D0AAF1D7176385CC00759E26 /* pacplus.c */,
 				D0AAF1D8176385CC00759E26 /* pcecommn.c */,
 				D0AAF1D9176385CC00759E26 /* pcecommn.h */,
 				D0AAF1DB176385CC00759E26 /* pcshare.c */,
-				D0590C64176D7FFE00211038 /* pcshare.h */,
+				D0E523151773C69200F646BE /* pcshare.h */,
 				D0AAF1DC176385CC00759E26 /* pgmcrypt.c */,
 				D0AAF1DD176385CC00759E26 /* pgmcrypt.h */,
 				D0AAF1DE176385CC00759E26 /* pgmprot.c */,
@@ -16681,8 +16681,8 @@
 				D0AAF414176385CF00759E26 /* popper.c */,
 				D0AAF415176385CF00759E26 /* portrait.c */,
 				D0AAF416176385CF00759E26 /* powerins.c */,
-				D0590C66176D802C00211038 /* powervr2.c */,
-				D0590C67176D802C00211038 /* powervr2.h */,
+				D02FBDA41773D5D500C518DF /* powervr2.c */,
+				D02FBDA51773D5D500C518DF /* powervr2.h */,
 				D0AAF417176385CF00759E26 /* ppu2c0x.c */,
 				D0AAF418176385CF00759E26 /* ppu2c0x.h */,
 				D0AAF419176385CF00759E26 /* prehisle.c */,
@@ -16854,8 +16854,8 @@
 				D0AAF4C1176385D100759E26 /* tbowl.c */,
 				D0AAF4C2176385D100759E26 /* tceptor.c */,
 				D0AAF4C3176385D100759E26 /* tecmo.c */,
-				D0590C6A176D805500211038 /* tecmo_spr.c */,
-				D0590C6B176D805500211038 /* tecmo_spr.h */,
+				D02FBDA81773D5EC00C518DF /* tecmo_spr.c */,
+				D02FBDA91773D5EC00C518DF /* tecmo_spr.h */,
 				D0AAF4C4176385D100759E26 /* tecmo16.c */,
 				D0AAF4C5176385D100759E26 /* tecmosys.c */,
 				D0AAF4C6176385D100759E26 /* tehkanwc.c */,
@@ -19720,16 +19720,16 @@
 				D00A8FB21764F07E00614014 /* zndip.h in Headers */,
 				D00A8FB41764F07E00614014 /* znsec.h in Headers */,
 				D00A8FB61764F07E00614014 /* zs01.h in Headers */,
-				D0590C30176D7BB700211038 /* redbaron.h in Headers */,
-				D0590C32176D7BE000211038 /* warpwarp.h in Headers */,
-				D0590C53176D7F6400211038 /* kabuki.h in Headers */,
-				D0590C57176D7F9900211038 /* midikbd.h in Headers */,
-				D0590C5B176D7FA800211038 /* mpeg573.h in Headers */,
-				D0590C5F176D7FD300211038 /* naomicrypt.h in Headers */,
-				D0590C63176D7FEF00211038 /* ns11prot.h in Headers */,
-				D0590C65176D7FFE00211038 /* pcshare.h in Headers */,
-				D0590C69176D802C00211038 /* powervr2.h in Headers */,
-				D0590C6D176D805500211038 /* tecmo_spr.h in Headers */,
+				D0E523A81773C73000F646BE /* kabuki.h in Headers */,
+				D0E523AA1773C73000F646BE /* midikbd.h in Headers */,
+				D0E523D61773C75100F646BE /* mpeg573.h in Headers */,
+				D0E523D81773C75100F646BE /* naomicrypt.h in Headers */,
+				D0E523DA1773C75100F646BE /* ns11prot.h in Headers */,
+				D0E524031773C75D00F646BE /* pcshare.h in Headers */,
+				D02FBDA11773D59200C518DF /* redbaron.h in Headers */,
+				D02FBDA31773D5A200C518DF /* warpwarp.h in Headers */,
+				D02FBDA71773D5D600C518DF /* powervr2.h in Headers */,
+				D02FBDAB1773D5EC00C518DF /* tecmo_spr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24032,28 +24032,28 @@
 				D00A8FB31764F07E00614014 /* znsec.c in Sources */,
 				D00A8FB51764F07E00614014 /* zs01.c in Sources */,
 				D0EBBEC1176577D8007C4010 /* drivlist.c in Sources */,
-				D0590C35176D7C2500211038 /* 24cdjuke.c in Sources */,
-				D0590C37176D7C5B00211038 /* dreambal.c in Sources */,
-				D0590C39176D7C7700211038 /* fresh.c in Sources */,
-				D0590C3B176D7C8700211038 /* fruitpc.c in Sources */,
-				D0590C3D176D7CA000211038 /* gambl186.c in Sources */,
-				D0590C3F176D7CB700211038 /* gluck2.c in Sources */,
-				D0590C41176D7CCF00211038 /* igs_m036.c in Sources */,
-				D0590C43176D7D1500211038 /* iteagle.c in Sources */,
-				D0590C45176D7D3400211038 /* pinball2k.c in Sources */,
-				D0590C47176D7D4B00211038 /* sanremo.c in Sources */,
-				D0590C49176D7DEF00211038 /* seabattl.c in Sources */,
-				D0590C4B176D7E0500211038 /* smsmcorp.c in Sources */,
-				D0590C4D176D7E1A00211038 /* stuntair.c in Sources */,
-				D0590C4F176D7E3500211038 /* wmg.c in Sources */,
-				D0590C51176D7F4F00211038 /* decathlt.c in Sources */,
-				D0590C56176D7F9900211038 /* midikbd.c in Sources */,
-				D0590C5A176D7FA800211038 /* mpeg573.c in Sources */,
-				D0590C5E176D7FD300211038 /* naomicrypt.c in Sources */,
-				D0590C62176D7FEF00211038 /* ns11prot.c in Sources */,
-				D0590C68176D802C00211038 /* powervr2.c in Sources */,
-				D0590C6C176D805500211038 /* tecmo_spr.c in Sources */,
 				D0590C70176D83B900211038 /* stv.c in Sources */,
+				D0E522E61773C48C00F646BE /* 24cdjuke.c in Sources */,
+				D0E522E81773C4A800F646BE /* dreambal.c in Sources */,
+				D0E522EA1773C4B900F646BE /* fresh.c in Sources */,
+				D0E522EC1773C4C400F646BE /* fruitpc.c in Sources */,
+				D0E522EE1773C4DA00F646BE /* gambl186.c in Sources */,
+				D0E522F01773C4E300F646BE /* gluck2.c in Sources */,
+				D0E522F21773C4F100F646BE /* igs_m036.c in Sources */,
+				D0E522F41773C4FC00F646BE /* iteagle.c in Sources */,
+				D0E522F61773C50D00F646BE /* pinball2k.c in Sources */,
+				D0E522F81773C51E00F646BE /* sanremo.c in Sources */,
+				D0E522FA1773C52800F646BE /* seabattl.c in Sources */,
+				D0E522FC1773C53400F646BE /* smsmcorp.c in Sources */,
+				D0E522FE1773C55200F646BE /* stuntair.c in Sources */,
+				D0E523001773C56800F646BE /* wmg.c in Sources */,
+				D0E523A71773C73000F646BE /* decathlt.c in Sources */,
+				D0E523A91773C73000F646BE /* midikbd.c in Sources */,
+				D0E523AB1773C73000F646BE /* mpeg573.c in Sources */,
+				D0E523D71773C75100F646BE /* naomicrypt.c in Sources */,
+				D0E523D91773C75100F646BE /* ns11prot.c in Sources */,
+				D02FBDA61773D5D600C518DF /* powervr2.c in Sources */,
+				D02FBDAA1773D5EC00C518DF /* tecmo_spr.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
