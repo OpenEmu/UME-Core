@@ -277,6 +277,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     glOrtho(0.0, (GLdouble)_bufferSize.width, (GLdouble)_bufferSize.height, 0.0, 0.0, -1.0);
 
     glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     for (render_primitive *prim = primitives.first(); prim != NULL; prim = prim->next()) {
         GLfloat color[4];
@@ -382,20 +383,13 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                     glEnable(target);
                     glBindTexture(target, CVOpenGLTextureGetName(texture));
 
-                    glBegin(GL_QUADS);
                     glColor4fv(color);
-                    glTexCoord2f(width * prim->texcoords.tl.u, height * prim->texcoords.tl.v);
-                    glVertex2f(prim->bounds.x0, prim->bounds.y0);
-                    glColor4fv(color);
-                    glTexCoord2f(width * prim->texcoords.tr.u, height * prim->texcoords.tr.v);
-                    glVertex2f(prim->bounds.x1, prim->bounds.y0);
-                    glColor4fv(color);
-                    glTexCoord2f(width * prim->texcoords.br.u, height * prim->texcoords.br.v);
-                    glVertex2f(prim->bounds.x1, prim->bounds.y1);
-                    glColor4fv(color);
-                    glTexCoord2f(width * prim->texcoords.bl.u, height * prim->texcoords.bl.v);
-                    glVertex2f(prim->bounds.x0, prim->bounds.y1);
-                    glEnd();
+                    glLineWidth(1.0f);
+                    GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1, prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1, prim->bounds.x1, prim->bounds.y0 };
+                    glVertexPointer(2, GL_FLOAT, 0, vertices);
+                    GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v, width * prim->texcoords.tl.u, height * prim->texcoords.tl.v, width * prim->texcoords.br.u, height * prim->texcoords.br.v, width * prim->texcoords.tr.u, height * prim->texcoords.tr.v };
+                    glTexCoordPointer(2, GL_FLOAT, 0, vertices);
+                    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
                     glDisable(target);
 
