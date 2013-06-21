@@ -258,9 +258,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     if (_textureCache == NULL) {
         CGLContextObj context = CGLGetCurrentContext();
         CVOpenGLTextureCacheCreate(NULL, NULL, context, CGLGetPixelFormat(context), NULL, &_textureCache);
+    } else {
+        CVOpenGLTextureCacheFlush(_textureCache, 0);
     }
-
-    glShadeModel(GL_SMOOTH);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glDisable(GL_DEPTH_TEST);
@@ -342,6 +342,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
                     CVPixelBufferLockBaseAddress(pixelBuffer, 0);
                     uint32_t *buffer = (uint32_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
+                    vImage_Buffer image = { buffer, height, width, CVPixelBufferGetBytesPerRow(pixelBuffer) };
+
                     int texformat = PRIMFLAG_GET_TEXFORMAT(prim->flags);
                     switch (texformat) {
                         case TEXFORMAT_PALETTE16:
@@ -358,12 +360,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                         }
                         case TEXFORMAT_RGB32:
                         case TEXFORMAT_ARGB32: {
-                            rgb_t *base = (rgb_t *)texinfo.base;
-                            for (int y = 0; y < height; y++) {
-                                for (int x = 0; x < width; x++) {
-                                    *buffer++ = *base++;
-                                }
-                                base += texinfo.rowpixels - width;
+                            vImage_Buffer textureImage = { texinfo.base, height, width, texinfo.rowpixels * sizeof(rgb_t) };
+                            if (texinfo.palette == NULL) {
+                                vImageSelectChannels_ARGB8888(&textureImage, &image, &image, 0xFF, kvImageNoFlags);
+                            } else {
+                                // Use lookup table!
                             }
 
                             break;
@@ -373,11 +374,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                             break;
                     }
 
-                    /*if (texformat == TEXFORMAT_RGB32 || texformat == TEXFORMAT_PALETTE16) {
-                        vImage_Buffer image = { buffer, height, width, CVPixelBufferGetBytesPerRow(pixelBuffer) };
-                        Pixel_8888 solidColor = { 0xFF, 0xFF, 0xFF, 0xFF };
-                        vImageOverwriteChannelsWithPixel_ARGB8888(solidColor, &image, &image, 0x8, kvImage);
-                    }*/
+                    if (texformat == TEXFORMAT_RGB32 || texformat == TEXFORMAT_PALETTE16) {
+                        vImageOverwriteChannelsWithScalar_ARGB8888(0xFF, &image, &image, 0x8, kvImageNoFlags);
+                    }
 
                     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 
