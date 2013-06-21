@@ -190,7 +190,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 }
 
 - (void)stopEmulation {
-    // For some reason, this does not work yet, the game thread does not exit
     if (_machine != NULL) _machine->schedule_exit();
     [super stopEmulation];
 }
