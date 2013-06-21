@@ -138,6 +138,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
     _machine->render().target_free(_target);
     _target = NULL;
+    CVOpenGLTextureCacheRelease(_textureCache);
 
     _machine = NULL;
 }
@@ -380,9 +381,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
                     CVOpenGLTextureRef texture = NULL;
                     CVOpenGLTextureCacheCreateTextureFromImage(NULL, _textureCache, pixelBuffer, NULL, &texture);
+                    CVPixelBufferRelease(pixelBuffer);
 
                     GLenum target = CVOpenGLTextureGetTarget(texture);
                     glEnable(target);
+                    glBindTexture(target, CVOpenGLTextureGetName(texture));
 
                     glBegin(GL_QUADS);
                     glColor4fv(color);
@@ -400,6 +403,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                     glEnd();
 
                     glDisable(target);
+
+                    CVOpenGLTextureRelease(texture);
                 }
 
                 break;
