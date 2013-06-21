@@ -465,13 +465,13 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 // Both loading and saving state is broken, crashes
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-    if (_machine != NULL) _machine->schedule_save([fileName UTF8String]);
-    return (_machine != NULL);
+    //if (_machine != NULL) _machine->schedule_save([fileName UTF8String]);
+    return NO;
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-    if (_machine != NULL) _machine->schedule_load([fileName UTF8String]);
-    return (_machine != NULL);
+    //if (_machine != NULL) _machine->schedule_load([fileName UTF8String]);
+    return NO;
 }
 
 @end
