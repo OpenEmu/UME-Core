@@ -276,6 +276,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     glLoadIdentity();
     glOrtho(0.0, (GLdouble)_bufferSize.width, (GLdouble)_bufferSize.height, 0.0, 0.0, -1.0);
 
+    glEnableClientState(GL_VERTEX_ARRAY);
+
     for (render_primitive *prim = primitives.first(); prim != NULL; prim = prim->next()) {
         GLfloat color[4];
         color[0] = prim->color.r;
@@ -305,33 +307,27 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
         switch (prim->type) {
             case render_primitive::LINE: {
+                glColor4fv(color);
                 BOOL line = ((prim->bounds.x1 != prim->bounds.x0) || (prim->bounds.y1 != prim->bounds.y0));
                 if (line) glLineWidth(prim->width);
                 else glPointSize(prim->width);
 
-                glBegin(line ? GL_LINES : GL_POINTS);
-                glColor4fv(color);
-                glVertex2f(prim->bounds.x0, prim->bounds.y0);
-                if (line) glVertex2f(prim->bounds.x1, prim->bounds.y1);
-                glEnd();
+                GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1 };
+                glVertexPointer(2, GL_FLOAT, 0, vertices);
+
+                if (line) glDrawArrays(GL_LINES, 0, 2);
+                else glDrawArrays(GL_POINTS, 0, 1);
 
                 break;
             }
 
             case render_primitive::QUAD: {
                 if (prim->texture.base == NULL) {
+                    glColor4fv(color);
                     glLineWidth(1.0f);
-                    glPointSize(1.0f);
-                    glBegin(GL_QUADS);
-                    glColor4fv(color);
-                    glVertex2f(prim->bounds.x0, prim->bounds.y0);
-                    glColor4fv(color);
-                    glVertex2f(prim->bounds.x1, prim->bounds.y0);
-                    glColor4fv(color);
-                    glVertex2f(prim->bounds.x1, prim->bounds.y1);
-                    glColor4fv(color);
-                    glVertex2f(prim->bounds.x0, prim->bounds.y1);
-                    glEnd();
+                    GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1, prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1, prim->bounds.x1, prim->bounds.y0 };
+                    glVertexPointer(2, GL_FLOAT, 0, vertices);
+                    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
                 } else {
                     render_texinfo texinfo = prim->texture;
                     size_t width = texinfo.width, height = texinfo.height;
@@ -428,8 +424,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
 - (void)osd_update_audio_stream:(const INT16 *)buffer samples:(int)samples_this_frame {
     OERingBuffer *ringBuffer = [self ringBufferAtIndex:0];
-    NSUInteger bytesPerFrame = (self.audioBitDepth * self.channelCount) / 8;
-    NSUInteger bytesToWrite = samples_this_frame * bytesPerFrame;
+    NSUInteger bytesPerSample = (self.audioBitDepth * self.channelCount) / 8;
+    NSUInteger bytesToWrite = samples_this_frame * bytesPerSample;
     NSUInteger bytesAvailableToWrite = ringBuffer.availableBytes;
     
     if (bytesToWrite > bytesAvailableToWrite) {
