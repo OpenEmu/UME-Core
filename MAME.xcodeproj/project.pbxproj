@@ -1959,6 +1959,8 @@
 		D02FBDA71773D5D600C518DF /* powervr2.h in Headers */ = {isa = PBXBuildFile; fileRef = D02FBDA51773D5D500C518DF /* powervr2.h */; };
 		D02FBDAA1773D5EC00C518DF /* tecmo_spr.c in Sources */ = {isa = PBXBuildFile; fileRef = D02FBDA81773D5EC00C518DF /* tecmo_spr.c */; };
 		D02FBDAB1773D5EC00C518DF /* tecmo_spr.h in Headers */ = {isa = PBXBuildFile; fileRef = D02FBDA91773D5EC00C518DF /* tecmo_spr.h */; };
+		D02FBDAD1773FB2C00C518DF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D02FBDAC1773FB2C00C518DF /* CoreVideo.framework */; };
+		D02FBDAF177423D500C518DF /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D02FBDAE177423D500C518DF /* Accelerate.framework */; };
 		D03AEDEA176A6410009742C6 /* 53c7xx.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE2D0176385B600759E26 /* 53c7xx.c */; };
 		D03AEDEB176A6410009742C6 /* 53c7xx.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE2D1176385B600759E26 /* 53c7xx.h */; };
 		D03AEDEC176A6410009742C6 /* 53c810.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE2D2176385B600759E26 /* 53c810.c */; };
@@ -5030,6 +5032,8 @@
 		D02FBDA51773D5D500C518DF /* powervr2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = powervr2.h; sourceTree = "<group>"; };
 		D02FBDA81773D5EC00C518DF /* tecmo_spr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tecmo_spr.c; sourceTree = "<group>"; };
 		D02FBDA91773D5EC00C518DF /* tecmo_spr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tecmo_spr.h; sourceTree = "<group>"; };
+		D02FBDAC1773FB2C00C518DF /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		D02FBDAE177423D500C518DF /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		D04050D1176A631200E4D36B /* libmachine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmachine.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D04C0683176B4D2D00E8C84C /* libvideo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvideo.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D05447351770F7F300225294 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -11146,6 +11150,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D02FBDAF177423D500C518DF /* Accelerate.framework in Frameworks */,
+				D02FBDAD1773FB2C00C518DF /* CoreVideo.framework in Frameworks */,
 				D05447361770F7F400225294 /* OpenGL.framework in Frameworks */,
 				D0ECAC74176CED5C008A89A8 /* liblua.a in Frameworks */,
 				D04C0689176B4D5500E8C84C /* libvideo.a in Frameworks */,
@@ -11383,6 +11389,8 @@
 			children = (
 				D00A068D1763763000C99008 /* Cocoa.framework */,
 				D05447351770F7F300225294 /* OpenGL.framework */,
+				D02FBDAC1773FB2C00C518DF /* CoreVideo.framework */,
+				D02FBDAE177423D500C518DF /* Accelerate.framework */,
 				D0EBBE9D17655D49007C4010 /* CoreAudio.framework */,
 				D0EBBE9A17655C6B007C4010 /* CoreMIDI.framework */,
 			);

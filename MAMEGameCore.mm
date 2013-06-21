@@ -258,8 +258,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     if (_textureCache == NULL) {
         CGLContextObj context = CGLGetCurrentContext();
         CVOpenGLTextureCacheCreate(NULL, NULL, context, CGLGetPixelFormat(context), NULL, &_textureCache);
-    } else {
-        CVOpenGLTextureCacheFlush(_textureCache, 0);
     }
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -338,7 +336,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                     render_texinfo texinfo = prim->texture;
                     size_t width = texinfo.width, height = texinfo.height;
                     CVPixelBufferRef pixelBuffer = NULL;
-                    CVPixelBufferCreate(NULL, width, height, k32ARGBPixelFormat, NULL, &pixelBuffer);
+                    CVPixelBufferCreate(NULL, width, height, kCVPixelFormatType_32ARGB, NULL, &pixelBuffer);
 
                     CVPixelBufferLockBaseAddress(pixelBuffer, 0);
                     uint32_t *buffer = (uint32_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
@@ -385,7 +383,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
                     GLenum target = CVOpenGLTextureGetTarget(texture);
                     glEnable(target);
-                    glBindTexture(target, CVOpenGLTextureGetName(texture));
 
                     glBegin(GL_QUADS);
                     glColor4fv(color);
@@ -403,9 +400,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                     glEnd();
 
                     glDisable(target);
-
-                    CVOpenGLTextureRelease(texture);
-                    CVPixelBufferRelease(pixelBuffer);
                 }
 
                 break;
@@ -415,6 +409,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                 break;
         }
     }
+
+    glFlush();
+    CVOpenGLTextureCacheFlush(_textureCache, 0);
 
     primitives.release_lock();
 }
