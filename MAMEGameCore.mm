@@ -388,7 +388,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                     GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1, prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1, prim->bounds.x1, prim->bounds.y0 };
                     glVertexPointer(2, GL_FLOAT, 0, vertices);
                     GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v, width * prim->texcoords.tl.u, height * prim->texcoords.tl.v, width * prim->texcoords.br.u, height * prim->texcoords.br.v, width * prim->texcoords.tr.u, height * prim->texcoords.tr.v };
-                    glTexCoordPointer(2, GL_FLOAT, 0, vertices);
+                    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
                     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
                     glDisable(target);
