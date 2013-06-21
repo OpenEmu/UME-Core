@@ -26,6 +26,8 @@
 
 #import "MAMEGameCore.h"
 
+#import <Accelerate/Accelerate.h>
+
 #import <OpenEmuBase/OERingBuffer.h>
 #import <OpenGL/gl.h>
 
@@ -44,6 +46,8 @@
     INT32 _buttons[OEArcadeButtonCount];
     INT32 _axes[INPUT_MAX_AXIS];
     osd_event *_renderEvent;
+
+    CVOpenGLTextureCacheRef _textureCache;
 
     NSString *_romDir;
     NSString *_driverName;
@@ -106,7 +110,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     _target = _machine->render().target_alloc();
     _target->set_max_update_rate(self.frameInterval);
 
-    INT32 width, height;
+    INT32 width = 0, height = 0;
     _target->compute_minimum_size(width, height);
     if (width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
     _target->set_bounds(_bufferSize.width, _bufferSize.height);
@@ -251,6 +255,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     render_primitive_list &primitives = _target->get_primitives();
     primitives.acquire_lock();
     
+    if (_textureCache == NULL) {
+        CGLContextObj context = CGLGetCurrentContext();
+        CVOpenGLTextureCacheCreate(NULL, NULL, context, CGLGetPixelFormat(context), NULL, &_textureCache);
+    }
+
     glShadeModel(GL_SMOOTH);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -261,9 +270,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // set lines and points just barely above normal size to get proper results
-    glLineWidth(1.1f);
-    glPointSize(1.1f);
     glDisable(GL_LINE_SMOOTH);
     glDisable(GL_POINT_SMOOTH);
 
@@ -272,9 +278,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     glLoadIdentity();
     glOrtho(0.0, (GLdouble)_bufferSize.width, (GLdouble)_bufferSize.height, 0.0, 0.0, -1.0);
 
-    int count = 0;
     for (render_primitive *prim = primitives.first(); prim != NULL; prim = prim->next()) {
-        count++;
         GLfloat color[4];
         color[0] = prim->color.r;
         color[1] = prim->color.g;
@@ -303,27 +307,107 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
         switch (prim->type) {
             case render_primitive::LINE: {
-                BOOL isLine = ((prim->bounds.x1 != prim->bounds.x0) || (prim->bounds.y1 != prim->bounds.y0));
-                glBegin(isLine ? GL_LINES : GL_POINTS);
+                BOOL line = ((prim->bounds.x1 != prim->bounds.x0) || (prim->bounds.y1 != prim->bounds.y0));
+                if (line) glLineWidth(prim->width);
+                else glPointSize(prim->width);
+
+                glBegin(line ? GL_LINES : GL_POINTS);
                 glColor4fv(color);
                 glVertex2f(prim->bounds.x0, prim->bounds.y0);
-                if (isLine) glVertex2f(prim->bounds.x1, prim->bounds.y1);
+                if (line) glVertex2f(prim->bounds.x1, prim->bounds.y1);
                 glEnd();
 
                 break;
             }
 
             case render_primitive::QUAD: {
-                glBegin(GL_QUADS);
-                glColor4fv(color);
-                glVertex2f(prim->bounds.x0, prim->bounds.y0);
-                glColor4fv(color);
-                glVertex2f(prim->bounds.x1, prim->bounds.y0);
-                glColor4fv(color);
-                glVertex2f(prim->bounds.x1, prim->bounds.y1);
-                glColor4fv(color);
-                glVertex2f(prim->bounds.x0, prim->bounds.y1);
-                glEnd();
+                if (prim->texture.base == NULL) {
+                    glLineWidth(1.0f);
+                    glPointSize(1.0f);
+                    glBegin(GL_QUADS);
+                    glColor4fv(color);
+                    glVertex2f(prim->bounds.x0, prim->bounds.y0);
+                    glColor4fv(color);
+                    glVertex2f(prim->bounds.x1, prim->bounds.y0);
+                    glColor4fv(color);
+                    glVertex2f(prim->bounds.x1, prim->bounds.y1);
+                    glColor4fv(color);
+                    glVertex2f(prim->bounds.x0, prim->bounds.y1);
+                    glEnd();
+                } else {
+                    render_texinfo texinfo = prim->texture;
+                    size_t width = texinfo.width, height = texinfo.height;
+                    CVPixelBufferRef pixelBuffer = NULL;
+                    CVPixelBufferCreate(NULL, width, height, k32ARGBPixelFormat, NULL, &pixelBuffer);
+
+                    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+                    uint32_t *buffer = (uint32_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
+                    int texformat = PRIMFLAG_GET_TEXFORMAT(prim->flags);
+                    switch (texformat) {
+                        case TEXFORMAT_PALETTE16:
+                        case TEXFORMAT_PALETTEA16: {
+                            uint16_t *base = (uint16_t *)texinfo.base;
+                            for (int y = 0; y < height; y++) {
+                                for (int x = 0; x < width; x++) {
+                                    *buffer++ = texinfo.palette[*base++];
+                                }
+                                base += texinfo.rowpixels - width;
+                            }
+
+                            break;
+                        }
+                        case TEXFORMAT_RGB32:
+                        case TEXFORMAT_ARGB32: {
+                            rgb_t *base = (rgb_t *)texinfo.base;
+                            for (int y = 0; y < height; y++) {
+                                for (int x = 0; x < width; x++) {
+                                    *buffer++ = *base++;
+                                }
+                                base += texinfo.rowpixels - width;
+                            }
+
+                            break;
+                        }
+
+                        default:
+                            break;
+                    }
+
+                    /*if (texformat == TEXFORMAT_RGB32 || texformat == TEXFORMAT_PALETTE16) {
+                        vImage_Buffer image = { buffer, height, width, CVPixelBufferGetBytesPerRow(pixelBuffer) };
+                        Pixel_8888 solidColor = { 0xFF, 0xFF, 0xFF, 0xFF };
+                        vImageOverwriteChannelsWithPixel_ARGB8888(solidColor, &image, &image, 0x8, kvImage);
+                    }*/
+
+                    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+
+                    CVOpenGLTextureRef texture = NULL;
+                    CVOpenGLTextureCacheCreateTextureFromImage(NULL, _textureCache, pixelBuffer, NULL, &texture);
+
+                    GLenum target = CVOpenGLTextureGetTarget(texture);
+                    glEnable(target);
+                    glBindTexture(target, CVOpenGLTextureGetName(texture));
+
+                    glBegin(GL_QUADS);
+                    glColor4fv(color);
+                    glTexCoord2f(width * prim->texcoords.tl.u, height * prim->texcoords.tl.v);
+                    glVertex2f(prim->bounds.x0, prim->bounds.y0);
+                    glColor4fv(color);
+                    glTexCoord2f(width * prim->texcoords.tr.u, height * prim->texcoords.tr.v);
+                    glVertex2f(prim->bounds.x1, prim->bounds.y0);
+                    glColor4fv(color);
+                    glTexCoord2f(width * prim->texcoords.br.u, height * prim->texcoords.br.v);
+                    glVertex2f(prim->bounds.x1, prim->bounds.y1);
+                    glColor4fv(color);
+                    glTexCoord2f(width * prim->texcoords.bl.u, height * prim->texcoords.bl.v);
+                    glVertex2f(prim->bounds.x0, prim->bounds.y1);
+                    glEnd();
+
+                    glDisable(target);
+
+                    CVOpenGLTextureRelease(texture);
+                    CVPixelBufferRelease(pixelBuffer);
+                }
 
                 break;
             }
@@ -332,9 +416,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                 break;
         }
     }
-    
-    NSLog(@"Rendering primitives! %i", count);
-    
+
     primitives.release_lock();
 }
 
