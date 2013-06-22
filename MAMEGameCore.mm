@@ -173,9 +173,14 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     BOOL verified = NO;
     while (drivlist.next() && !verified) {
         media_auditor::summary summary = auditor.audit_media(AUDIT_VALIDATE_FAST);
-        if (summary == media_auditor::CORRECT) {
+        if (summary == media_auditor::CORRECT || summary == media_auditor::BEST_AVAILABLE) {
             driver = drivlist.driver();
             verified = YES;
+        } else {
+            astring *output = new astring();
+            auditor.summarize(drivlist.driver().name, output);
+            NSLog(@"MAME: Audit failed with output:\n%s", output->cstr());
+            delete output;
         }
     }
     
