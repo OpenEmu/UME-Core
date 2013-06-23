@@ -219,6 +219,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     options.set_value(OPTION_SAMPLERATE, (int)_sampleRate, OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_NVRAM_DIRECTORY, [[self batterySavesDirectoryPath] UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_CFG_DIRECTORY, [[self batterySavesDirectoryPath] UTF8String], OPTION_PRIORITY_HIGH, err);
 #ifdef DEBUG
     options.set_value(OPTION_VERBOSE, true, OPTION_PRIORITY_HIGH, err);
 #endif
