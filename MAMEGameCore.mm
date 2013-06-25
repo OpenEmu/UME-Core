@@ -47,7 +47,7 @@
     INT32 _axes[INPUT_MAX_AXIS];
     osd_event *_renderEvent;
 
-    CVOpenGLTextureCacheRef _textureCache;
+    GLuint _texture;
 
     NSString *_romDir;
     NSString *_driverName;
@@ -138,7 +138,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
     _machine->render().target_free(_target);
     _target = NULL;
-    CVOpenGLTextureCacheRelease(_textureCache);
 
     _machine = NULL;
 }
@@ -261,10 +260,15 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
     render_primitive_list &primitives = _target->get_primitives();
     primitives.acquire_lock();
-    
-    if (_textureCache == NULL) {
-        CGLContextObj context = CGLGetCurrentContext();
-        CVOpenGLTextureCacheCreate(NULL, NULL, context, CGLGetPixelFormat(context), NULL, &_textureCache);
+
+    if(!_texture)
+    {
+        glEnable(GL_TEXTURE_RECTANGLE_EXT);
+        glGenTextures(1, &_texture);
+        glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texture);
+
+        // I'm just setting up a big texture here. We should start smaller and resize as needed.
+        glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA8, 2000, 2000, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
     }
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -338,17 +342,18 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                 } else {
                     render_texinfo texinfo = prim->texture;
                     size_t width = texinfo.width, height = texinfo.height;
-                    CVPixelBufferRef pixelBuffer = NULL;
-                    CVPixelBufferCreate(NULL, width, height, kCVPixelFormatType_32ARGB, NULL, &pixelBuffer);
 
-                    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-                    uint32_t *buffer = (uint32_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
-                    vImage_Buffer image = { buffer, height, width, CVPixelBufferGetBytesPerRow(pixelBuffer) };
+                    glEnable(GL_TEXTURE_RECTANGLE_EXT);
+                    glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texture);
+                    glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, prim->texture.rowpixels, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, texinfo.base);
 
+
+                    // TODO: Redo textures utilizing palettes
+                    /*
                     int texformat = PRIMFLAG_GET_TEXFORMAT(prim->flags);
                     switch (texformat) {
                         case TEXFORMAT_PALETTE16:
-                        case TEXFORMAT_PALETTEA16: {
+                        case TEXFORMAT_PALETTEA16:{
                             uint16_t *base = (uint16_t *)texinfo.base;
                             for (int y = 0; y < height; y++) {
                                 for (int x = 0; x < width; x++) {
@@ -359,37 +364,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
                             break;
                         }
-                        case TEXFORMAT_RGB32:
-                        case TEXFORMAT_ARGB32: {
-                            vImage_Buffer teximage = { texinfo.base, height, width, texinfo.rowpixels * sizeof(rgb_t) };
-                            if (texinfo.palette == NULL) {
-                                vImageSelectChannels_ARGB8888(&teximage, &image, &image, 0xFF, kvImageNoFlags);
-                            } else {
-                                // Use lookup table!
-                            }
-
-                            break;
-                        }
 
                         default:
                             break;
-                    }
+                    }*/
 
-                    uint8_t map[4] = {  3, 2, 1, 0 };
-                    vImagePermuteChannels_ARGB8888(&image, &image, map, kvImageNoFlags);
-
-                    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-
-                    CVOpenGLTextureRef texture = NULL;
-                    CVOpenGLTextureCacheCreateTextureFromImage(NULL, _textureCache, pixelBuffer, NULL, &texture);
-                    CVPixelBufferRelease(pixelBuffer);
-
-                    GLenum target = CVOpenGLTextureGetTarget(texture);
-                    glEnable(target);
-                    glBindTexture(target, CVOpenGLTextureGetName(texture));
-
-                    glColor4fv(color);
-                    glLineWidth(1.0f);
                     GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1, prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1, prim->bounds.x1, prim->bounds.y0 };
                     glVertexPointer(2, GL_FLOAT, 0, vertices);
                     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -398,9 +377,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
                     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-                    glDisable(target);
-
-                    CVOpenGLTextureRelease(texture);
+                    glDisable(GL_TEXTURE_RECTANGLE_EXT);
                 }
 
                 break;
@@ -411,8 +388,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
         }
     }
 
-    glFinish();
-    CVOpenGLTextureCacheFlush(_textureCache, 0);
+    glFlushRenderAPPLE();
 
     primitives.release_lock();
 }
