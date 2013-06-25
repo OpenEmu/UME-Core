@@ -3,14 +3,14 @@
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- * Redistributions of source code must retain the above copyright
- notice, this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright
- notice, this list of conditions and the following disclaimer in the
- documentation and/or other materials provided with the distribution.
- * Neither the name of the OpenEmu Team nor the
- names of its contributors may be used to endorse or promote products
- derived from this software without specific prior written permission.
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+     * Neither the name of the OpenEmu Team nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
  
  THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -18,15 +18,13 @@
  DISCLAIMED. IN NO EVENT SHALL OpenEmu Team BE LIABLE FOR ANY
  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "MAMEGameCore.h"
-
-#import <Accelerate/Accelerate.h>
 
 #import <OpenEmuBase/OERingBuffer.h>
 #import <OpenGL/gl.h>
@@ -40,7 +38,8 @@
 
 #include "osx_osd_interface.h"
 
-@interface MAMEGameCore () <OEArcadeSystemResponderClient> {
+@interface MAMEGameCore () <OEArcadeSystemResponderClient>
+{
     running_machine *_machine;
     render_target *_target;
     INT32 _buttons[OEArcadeButtonCount];
@@ -57,16 +56,19 @@
 }
 @end
 
-static void output_callback(delegate_late_bind *param, const char *format, va_list argptr) {
+static void output_callback(delegate_late_bind *param, const char *format, va_list argptr)
+{
     NSLog(@"MAME: %@", [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:argptr]);
 }
 
-static void mame_did_exit(running_machine *machine) {
+static void mame_did_exit(running_machine *machine)
+{
     osx_osd_interface &interface = dynamic_cast<osx_osd_interface &>(machine->osd());
     [interface.core() osd_exit:machine];
 }
 
-static INT32 joystick_get_state(void *device_internal, void *item_internal) {
+static INT32 joystick_get_state(void *device_internal, void *item_internal)
+{
     return *(INT32 *)item_internal;
 }
 
@@ -74,7 +76,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
 #pragma mark - Lifecycle
 
-+ (void)initialize {
++ (void)initialize
+{
     mame_set_output_channel(OUTPUT_CHANNEL_ERROR, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
     mame_set_output_channel(OUTPUT_CHANNEL_WARNING, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
     mame_set_output_channel(OUTPUT_CHANNEL_INFO, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
@@ -83,9 +86,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     mame_set_output_channel(OUTPUT_CHANNEL_LOG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
 }
 
-- (id)init {
+- (id)init
+{
     self = [super init];
-    if (!self) {
+    if(!self)
+    {
         return nil;
     }
 
@@ -98,11 +103,13 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
     osd_event_free(_renderEvent);
 }
 
-- (void)osd_init:(running_machine *)machine {
+- (void)osd_init:(running_machine *)machine
+{
     _machine = machine;
 
     _machine->add_notifier(MACHINE_NOTIFY_EXIT, machine_notify_delegate(FUNC(mame_did_exit), machine));
@@ -112,7 +119,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
     INT32 width = 0, height = 0;
     _target->compute_minimum_size(width, height);
-    if (width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
+    if(width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
     _target->set_bounds(_bufferSize.width, _bufferSize.height);
 
     // TODO: Fix UI rendering bug
@@ -133,7 +140,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     input->add_item("Button 6", ITEM_ID_BUTTON6, joystick_get_state, &_buttons[OEArcadeButton6]);
 }
 
-- (void)osd_exit:(running_machine *)machine {
+- (void)osd_exit:(running_machine *)machine
+{
     NSParameterAssert(_machine == machine);
 
     _machine->render().target_free(_target);
@@ -144,10 +152,10 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
 #pragma mark - Execution
 
-- (BOOL)loadFileAtPath:(NSString *)path {
-
+- (BOOL)loadFileAtPath:(NSString *)path
+{
     _romDir = [path stringByDeletingLastPathComponent];
-    if (!_romDir) return NO;
+    if(!_romDir) return NO;
 
     // Need a better way to identify the ROM driver from the archive path
 
@@ -170,12 +178,16 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     media_auditor auditor(drivlist);
 
     BOOL verified = NO;
-    while (drivlist.next() && !verified) {
+    while(drivlist.next() && !verified)
+    {
         media_auditor::summary summary = auditor.audit_media(AUDIT_VALIDATE_FAST);
-        if (summary == media_auditor::CORRECT || summary == media_auditor::BEST_AVAILABLE) {
+        if(summary == media_auditor::CORRECT || summary == media_auditor::BEST_AVAILABLE)
+        {
             driver = drivlist.driver();
             verified = YES;
-        } else {
+        }
+        else
+        {
             astring *output = new astring();
             auditor.summarize(drivlist.driver().name, output);
             NSLog(@"MAME: Audit failed with output:\n%s", output->cstr());
@@ -186,32 +198,39 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     return verified;
 }
 
-- (void)startEmulation {
-    if (!isRunning) {
+- (void)startEmulation
+{
+    if(!isRunning)
+    {
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
     }
 }
 
-- (void)stopEmulation {
-    if (_machine != NULL) _machine->schedule_exit();
+- (void)stopEmulation
+{
+    if(_machine != NULL) _machine->schedule_exit();
     [super stopEmulation];
 }
 
-- (void)setPauseEmulation:(BOOL)pauseEmulation {
-    if (_machine != NULL) {
-        if (pauseEmulation) _machine->pause();
+- (void)setPauseEmulation:(BOOL)pauseEmulation
+{
+    if(_machine != NULL)
+    {
+        if(pauseEmulation) _machine->pause();
         else _machine->resume();
     }
 
     [super setPauseEmulation:pauseEmulation];
 }
 
-- (void)resetEmulation {
-    if (_machine != NULL) _machine->schedule_hard_reset();
+- (void)resetEmulation
+{
+    if(_machine != NULL) _machine->schedule_hard_reset();
 }
 
-- (void)mameEmuThread {
+- (void)mameEmuThread
+{
     astring err;
 
     emu_options options = emu_options();
@@ -235,28 +254,33 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
 #pragma mark - Video
 
-- (BOOL)rendersToOpenGL {
+- (BOOL)rendersToOpenGL
+{
     return YES;
 }
 
-- (OEIntSize)bufferSize {
+- (OEIntSize)bufferSize
+{
     return _bufferSize;
 }
 
-- (OEIntSize)aspectSize {
+- (OEIntSize)aspectSize
+{
     return _bufferSize;
 }
 
-- (void)osd_update:(bool)skip_redraw {
+- (void)osd_update:(bool)skip_redraw
+{
     osd_event_set(_renderEvent);
 }
 
-- (void)executeFrameSkippingFrame:(BOOL)skip {
-    if (skip || _target == NULL) return;
+- (void)executeFrameSkippingFrame:(BOOL)skip
+{
+    if(skip || _target == NULL) return;
 
     // Only wait for 5 frames or so maximum
     int status = osd_event_wait(_renderEvent, 5 * (osd_ticks_per_second() / self.frameInterval));
-    if (status == FALSE) return;
+    if(status == FALSE) return;
 
     render_primitive_list &primitives = _target->get_primitives();
     primitives.acquire_lock();
@@ -289,14 +313,16 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    for (render_primitive *prim = primitives.first(); prim != NULL; prim = prim->next()) {
+    for(render_primitive *prim = primitives.first(); prim != NULL; prim = prim->next())
+    {
         GLfloat color[4];
         color[0] = prim->color.r;
         color[1] = prim->color.g;
         color[2] = prim->color.b;
         color[3] = prim->color.a;
 
-        switch (PRIMFLAG_GET_BLENDMODE(prim->flags)) {
+        switch(PRIMFLAG_GET_BLENDMODE(prim->flags))
+        {
             case BLENDMODE_NONE:
                 glDisable(GL_BLEND);
                 break;
@@ -316,37 +342,45 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                 break;
         }
 
-        switch (prim->type) {
-            case render_primitive::LINE: {
+        switch(prim->type)
+        {
+            case render_primitive::LINE:
+            {
+                GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1 };
+
                 glColor4fv(color);
                 BOOL line = ((prim->bounds.x1 != prim->bounds.x0) || (prim->bounds.y1 != prim->bounds.y0));
-                if (line) glLineWidth(prim->width);
+                if(line) glLineWidth(prim->width);
                 else glPointSize(prim->width);
-
-                GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1 };
+                
                 glVertexPointer(2, GL_FLOAT, 0, vertices);
-
-                if (line) glDrawArrays(GL_LINES, 0, 2);
+                if(line) glDrawArrays(GL_LINES, 0, 2);
                 else glDrawArrays(GL_POINTS, 0, 1);
 
                 break;
             }
 
             case render_primitive::QUAD: {
-                if (prim->texture.base == NULL) {
+                GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1,
+                                       prim->bounds.x0, prim->bounds.y0,
+                                       prim->bounds.x1, prim->bounds.y1,
+                                       prim->bounds.x1, prim->bounds.y0 };
+                
+                if(prim->texture.base == NULL)
+                {
                     glColor4fv(color);
                     glLineWidth(1.0f);
-                    GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1, prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1, prim->bounds.x1, prim->bounds.y0 };
                     glVertexPointer(2, GL_FLOAT, 0, vertices);
                     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-                } else {
+                }
+                else
+                {
                     render_texinfo texinfo = prim->texture;
                     size_t width = texinfo.width, height = texinfo.height;
 
                     glEnable(GL_TEXTURE_RECTANGLE_EXT);
                     glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texture);
                     glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, prim->texture.rowpixels, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, texinfo.base);
-
 
                     // TODO: Redo textures utilizing palettes
                     /*
@@ -369,15 +403,16 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                             break;
                     }*/
 
-                    GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1, prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1, prim->bounds.x1, prim->bounds.y0 };
+                    GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v,
+                                            width * prim->texcoords.tl.u, height * prim->texcoords.tl.v,
+                                            width * prim->texcoords.br.u, height * prim->texcoords.br.v,
+                                            width * prim->texcoords.tr.u, height * prim->texcoords.tr.v };
+                    
                     glVertexPointer(2, GL_FLOAT, 0, vertices);
                     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                    GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v, width * prim->texcoords.tl.u, height * prim->texcoords.tl.v, width * prim->texcoords.br.u, height * prim->texcoords.br.v, width * prim->texcoords.tr.u, height * prim->texcoords.tr.v };
                     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
                     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
                     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-                    glDisable(GL_TEXTURE_RECTANGLE_EXT);
                 }
 
                 break;
@@ -393,19 +428,22 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     primitives.release_lock();
 }
 
-- (void)executeFrame {
+- (void)executeFrame
+{
     [self executeFrameSkippingFrame:NO];
 }
 
 #pragma mark - Audio
 
-- (void)osd_update_audio_stream:(const INT16 *)buffer samples:(int)samples_this_frame {
+- (void)osd_update_audio_stream:(const INT16 *)buffer samples:(int)samples_this_frame
+{
     OERingBuffer *ringBuffer = [self ringBufferAtIndex:0];
     NSUInteger bytesPerSample = (self.audioBitDepth * self.channelCount) / 8;
     NSUInteger bytesToWrite = samples_this_frame * bytesPerSample;
     NSUInteger bytesAvailableToWrite = ringBuffer.availableBytes;
     
-    if (bytesToWrite > bytesAvailableToWrite) {
+    if(bytesToWrite > bytesAvailableToWrite)
+    {
         NSLog(@"MAME: Audio buffer overflow");
         bytesToWrite = bytesAvailableToWrite;
     }
@@ -413,27 +451,32 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     [ringBuffer write:buffer maxLength:bytesToWrite];
 }
 
-- (double)audioSampleRate {
+- (double)audioSampleRate
+{
     return _sampleRate;
 }
 
-- (NSUInteger)channelCount {
+- (NSUInteger)channelCount
+{
     return 2;
 }
 
 #pragma mark - Input
 
-- (void)setState:(BOOL)pressed ofButton:(OEArcadeButton)button forPlayer:(NSUInteger)player {
+- (void)setState:(BOOL)pressed ofButton:(OEArcadeButton)button forPlayer:(NSUInteger)player
+{
     _buttons[button] = pressed ? 1 : 0;
     _axes[0] = _buttons[OEArcadeButtonLeft] ? INPUT_ABSOLUTE_MIN : (_buttons[OEArcadeButtonRight] ? INPUT_ABSOLUTE_MAX : 0);
     _axes[1] = _buttons[OEArcadeButtonUp] ? INPUT_ABSOLUTE_MIN : (_buttons[OEArcadeButtonDown] ? INPUT_ABSOLUTE_MAX : 0);
 }
 
-- (oneway void)didPushArcadeButton:(OEArcadeButton)button forPlayer:(NSUInteger)player {
+- (oneway void)didPushArcadeButton:(OEArcadeButton)button forPlayer:(NSUInteger)player
+{
     [self setState:YES ofButton:button forPlayer:player];
 }
 
-- (oneway void)didReleaseArcadeButton:(OEArcadeButton)button forPlayer:(NSUInteger)player {
+- (oneway void)didReleaseArcadeButton:(OEArcadeButton)button forPlayer:(NSUInteger)player
+{
     [self setState:NO ofButton:button forPlayer:player];
 }
 
@@ -441,13 +484,15 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
 
 // Both loading and saving state is broken, crashes
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-    //if (_machine != NULL) _machine->schedule_save([fileName UTF8String]);
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName
+{
+    //if(_machine != NULL) _machine->schedule_save([fileName UTF8String]);
     return NO;
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-    //if (_machine != NULL) _machine->schedule_load([fileName UTF8String]);
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
+{
+    //if(_machine != NULL) _machine->schedule_load([fileName UTF8String]);
     return NO;
 }
 
