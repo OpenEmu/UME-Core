@@ -284,7 +284,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
     glOrtho(0.0, (GLdouble)_bufferSize.width, (GLdouble)_bufferSize.height, 0.0, 0.0, -1.0);
 
     glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     for (render_primitive *prim = primitives.first(); prim != NULL; prim = prim->next()) {
         GLfloat color[4];
@@ -362,9 +361,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                         }
                         case TEXFORMAT_RGB32:
                         case TEXFORMAT_ARGB32: {
-                            vImage_Buffer textureImage = { texinfo.base, height, width, texinfo.rowpixels * sizeof(rgb_t) };
+                            vImage_Buffer teximage = { texinfo.base, height, width, texinfo.rowpixels * sizeof(rgb_t) };
                             if (texinfo.palette == NULL) {
-                                vImageSelectChannels_ARGB8888(&textureImage, &image, &image, 0xFF, kvImageNoFlags);
+                                vImageSelectChannels_ARGB8888(&teximage, &image, &image, 0xFF, kvImageNoFlags);
                             } else {
                                 // Use lookup table!
                             }
@@ -376,9 +375,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                             break;
                     }
 
-                    if (texformat == TEXFORMAT_RGB32 || texformat == TEXFORMAT_PALETTE16) {
-                        vImageOverwriteChannelsWithScalar_ARGB8888(0xFF, &image, &image, 0x8, kvImageNoFlags);
-                    }
+                    uint8_t map[4] = {  3, 2, 1, 0 };
+                    vImagePermuteChannels_ARGB8888(&image, &image, map, kvImageNoFlags);
 
                     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 
@@ -394,9 +392,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
                     glLineWidth(1.0f);
                     GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1, prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1, prim->bounds.x1, prim->bounds.y0 };
                     glVertexPointer(2, GL_FLOAT, 0, vertices);
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
                     GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v, width * prim->texcoords.tl.u, height * prim->texcoords.tl.v, width * prim->texcoords.br.u, height * prim->texcoords.br.v, width * prim->texcoords.tr.u, height * prim->texcoords.tr.v };
                     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
                     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+                    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
                     glDisable(target);
 
@@ -411,7 +411,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal) {
         }
     }
 
-    glFlush();
+    glFinish();
     CVOpenGLTextureCacheFlush(_textureCache, 0);
 
     primitives.release_lock();
