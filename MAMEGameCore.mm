@@ -47,6 +47,7 @@
     osd_event *_renderEvent;
 
     GLuint _texture;
+    uint32_t *_buffer;
 
     NSString *_romDir;
     NSString *_driverName;
@@ -106,6 +107,12 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 - (void)dealloc
 {
     osd_event_free(_renderEvent);
+
+    if(_buffer)
+    {
+        free(_buffer);
+        _buffer = NULL;
+    }
 }
 
 - (void)osd_init:(running_machine *)machine
@@ -210,6 +217,13 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 - (void)stopEmulation
 {
     if(_machine != NULL) _machine->schedule_exit();
+
+    if(_texture)
+    {
+        glDeleteTextures(1, &_texture);
+        _texture = 0;
+    }
+
     [super stopEmulation];
 }
 
@@ -342,87 +356,72 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
                 break;
         }
 
-        switch(prim->type)
+        if(prim->type == render_primitive::LINE)
         {
-            case render_primitive::LINE:
+            GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1 };
+
+            glColor4fv(color);
+            BOOL line = ((prim->bounds.x1 != prim->bounds.x0) || (prim->bounds.y1 != prim->bounds.y0));
+            if(line) glLineWidth(prim->width);
+            else glPointSize(prim->width);
+
+            glVertexPointer(2, GL_FLOAT, 0, vertices);
+            if(line) glDrawArrays(GL_LINES, 0, 2);
+            else glDrawArrays(GL_POINTS, 0, 1);
+        }
+        else if(prim->type == render_primitive::QUAD)
+        {
+            GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1,
+                                   prim->bounds.x0, prim->bounds.y0,
+                                   prim->bounds.x1, prim->bounds.y1,
+                                   prim->bounds.x1, prim->bounds.y0 };
+
+            if(prim->texture.base == NULL)
             {
-                GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y0, prim->bounds.x1, prim->bounds.y1 };
-
                 glColor4fv(color);
-                BOOL line = ((prim->bounds.x1 != prim->bounds.x0) || (prim->bounds.y1 != prim->bounds.y0));
-                if(line) glLineWidth(prim->width);
-                else glPointSize(prim->width);
-                
+                glLineWidth(1.0f);
                 glVertexPointer(2, GL_FLOAT, 0, vertices);
-                if(line) glDrawArrays(GL_LINES, 0, 2);
-                else glDrawArrays(GL_POINTS, 0, 1);
-
-                break;
+                glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
             }
+            else
+            {
+                render_texinfo texinfo = prim->texture;
+                size_t width = texinfo.width, height = texinfo.height;
 
-            case render_primitive::QUAD: {
-                GLfloat vertices[] = { prim->bounds.x0, prim->bounds.y1,
-                                       prim->bounds.x0, prim->bounds.y0,
-                                       prim->bounds.x1, prim->bounds.y1,
-                                       prim->bounds.x1, prim->bounds.y0 };
-                
-                if(prim->texture.base == NULL)
+                if(_buffer) { free(_buffer); _buffer = NULL; }
+
+                int texformat = PRIMFLAG_GET_TEXFORMAT(prim->flags);
+                if(texformat == TEXFORMAT_PALETTE16 || texformat == TEXFORMAT_PALETTEA16)
                 {
-                    glColor4fv(color);
-                    glLineWidth(1.0f);
-                    glVertexPointer(2, GL_FLOAT, 0, vertices);
-                    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-                }
-                else
-                {
-                    render_texinfo texinfo = prim->texture;
-                    size_t width = texinfo.width, height = texinfo.height;
-
-                    glEnable(GL_TEXTURE_RECTANGLE_EXT);
-                    glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texture);
-                    glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, prim->texture.rowpixels, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, texinfo.base);
-
-                    // TODO: Redo textures utilizing palettes
-                    /*
-                    int texformat = PRIMFLAG_GET_TEXFORMAT(prim->flags);
-                    switch (texformat) {
-                        case TEXFORMAT_PALETTE16:
-                        case TEXFORMAT_PALETTEA16:{
-                            uint16_t *base = (uint16_t *)texinfo.base;
-                            for (int y = 0; y < height; y++) {
-                                for (int x = 0; x < width; x++) {
-                                    *buffer++ = texinfo.palette[*base++];
-                                }
-                                base += texinfo.rowpixels - width;
-                            }
-
-                            break;
-                        }
-
-                        default:
-                            break;
-                    }*/
-
-                    GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v,
-                                            width * prim->texcoords.tl.u, height * prim->texcoords.tl.v,
-                                            width * prim->texcoords.br.u, height * prim->texcoords.br.v,
-                                            width * prim->texcoords.tr.u, height * prim->texcoords.tr.v };
-                    
-                    glVertexPointer(2, GL_FLOAT, 0, vertices);
-                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-                    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-                    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                    uint32_t *bufferPointer = _buffer = (uint32_t *) malloc(width * height * sizeof(uint32_t));
+                    uint16_t *base = (uint16_t *)texinfo.base;
+                    for(int y = 0; y < height; ++y)
+                    {
+                        for(int x = 0; x < width; ++x)
+                            *bufferPointer++ = texinfo.palette[*base++];
+                        base += texinfo.rowpixels - width;
+                    }
                 }
 
-                break;
-            }
+                glEnable(GL_TEXTURE_RECTANGLE_EXT);
+                glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texture);
+                glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, _buffer ? width : texinfo.rowpixels, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _buffer ? _buffer : texinfo.base);
 
-            default:
-                break;
+                GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v,
+                                        width * prim->texcoords.tl.u, height * prim->texcoords.tl.v,
+                                        width * prim->texcoords.br.u, height * prim->texcoords.br.v,
+                                        width * prim->texcoords.tr.u, height * prim->texcoords.tr.v };
+
+                glVertexPointer(2, GL_FLOAT, 0, vertices);
+                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+                glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+                glDisable(GL_TEXTURE_RECTANGLE_EXT);
+            }
         }
     }
-
     glFlushRenderAPPLE();
 
     primitives.release_lock();
