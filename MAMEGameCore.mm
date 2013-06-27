@@ -54,6 +54,7 @@
 
     double _sampleRate;
     OEIntSize _bufferSize;
+    UINT32 _orientation;
 }
 @end
 
@@ -145,6 +146,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     input->add_item("Button 4", ITEM_ID_BUTTON4, joystick_get_state, &_buttons[OEArcadeButton4]);
     input->add_item("Button 5", ITEM_ID_BUTTON5, joystick_get_state, &_buttons[OEArcadeButton5]);
     input->add_item("Button 6", ITEM_ID_BUTTON6, joystick_get_state, &_buttons[OEArcadeButton6]);
+    
+    _orientation = _machine->system().flags & ORIENTATION_MASK;
 }
 
 - (void)osd_exit:(running_machine *)machine
@@ -281,7 +284,10 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (OEIntSize)aspectSize
 {
-    return _bufferSize;
+    if (_orientation == 0)
+        return OEIntSizeMake(4, 3);
+    else
+        return OEIntSizeMake(3, 4);
 }
 
 - (void)osd_update:(bool)skip_redraw
