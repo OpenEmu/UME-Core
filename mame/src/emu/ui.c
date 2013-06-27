@@ -314,7 +314,8 @@ int ui_display_startup_screens(running_machine &machine, int first_time, int sho
 	const int maxstate = 3;
 	int str = machine.options().seconds_to_run();
 	int show_gameinfo = !machine.options().skip_gameinfo();
-	int show_warnings = TRUE;
+	int show_warnings = FALSE;
+	show_disclaimer = FALSE;
 	int state;
 
 	/* disable everything if we are using -str for 300 or fewer seconds, or if we're the empty driver,
