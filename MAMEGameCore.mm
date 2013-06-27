@@ -45,6 +45,7 @@
     INT32 _buttons[OEArcadeButtonCount];
     INT32 _axes[INPUT_MAX_AXIS];
     osd_event *_renderEvent;
+    osd_event *_exitEvent;
 
     GLuint _texture;
     uint32_t *_buffer;
@@ -97,6 +98,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     }
 
     _renderEvent = osd_event_alloc(FALSE, FALSE);
+    _exitEvent   = osd_event_alloc(FALSE, FALSE);
     
     // Sensible defaults
     _sampleRate = 48000.0f;
@@ -108,6 +110,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 - (void)dealloc
 {
     osd_event_free(_renderEvent);
+    osd_event_free(_exitEvent);
 
     if(_buffer)
     {
@@ -158,6 +161,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     _target = NULL;
 
     _machine = NULL;
+
+    osd_event_set(_exitEvent);
 }
 
 #pragma mark - Execution
@@ -220,6 +225,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 - (void)stopEmulation
 {
     if(_machine != NULL) _machine->schedule_exit();
+
+    // Wait for MAME to shut down correctly
+    osd_event_wait(_exitEvent, osd_ticks_per_second() * 5);
 
     if(_texture)
     {
