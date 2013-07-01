@@ -147,6 +147,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     input->add_item("Button 4", ITEM_ID_BUTTON4, joystick_get_state, &_buttons[OEArcadeButton4]);
     input->add_item("Button 5", ITEM_ID_BUTTON5, joystick_get_state, &_buttons[OEArcadeButton5]);
     input->add_item("Button 6", ITEM_ID_BUTTON6, joystick_get_state, &_buttons[OEArcadeButton6]);
+    
+    input_device *inputKeys = _machine->input().device_class(DEVICE_CLASS_KEYBOARD).add_device("OpenEmu Keys", NULL);
+    inputKeys->add_item("Service", ITEM_ID_F2, joystick_get_state, &_buttons[OEArcadeButtonService]);
 }
 
 - (void)osd_exit:(running_machine *)machine
