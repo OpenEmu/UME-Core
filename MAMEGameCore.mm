@@ -42,6 +42,7 @@
 {
     running_machine *_machine;
     render_target *_target;
+    render_target *_uiTarget;
     INT32 _buttons[OEArcadeButtonCount];
     INT32 _axes[INPUT_MAX_AXIS];
     osd_event *_renderEvent;
@@ -55,7 +56,6 @@
 
     double _sampleRate;
     OEIntSize _bufferSize;
-    UINT32 _orientation;
 }
 @end
 
@@ -102,7 +102,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     
     // Sensible defaults
     _sampleRate = 48000.0f;
-    _bufferSize = (OEIntSize){640, 480};
+    _bufferSize = OEIntSizeMake(640, 480);
 
     return self;
 }
@@ -133,10 +133,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     if(width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
     _target->set_bounds(_bufferSize.width, _bufferSize.height);
 
-    // TODO: Fix UI rendering bug
-    // This is a temporary fix to disable UI (causes a crash normally)
-    render_target *uitarget = _machine->render().target_alloc();
-    _target->manager().set_ui_target(*uitarget);
+    _uiTarget = _machine->render().target_alloc();
+    _target->manager().set_ui_target(*_uiTarget);
 
     input_device *input = _machine->input().device_class(DEVICE_CLASS_JOYSTICK).add_device("OpenEmu", NULL);
     input->add_item("X Axis", ITEM_ID_XAXIS, joystick_get_state, &_axes[0]);
@@ -149,8 +147,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     input->add_item("Button 4", ITEM_ID_BUTTON4, joystick_get_state, &_buttons[OEArcadeButton4]);
     input->add_item("Button 5", ITEM_ID_BUTTON5, joystick_get_state, &_buttons[OEArcadeButton5]);
     input->add_item("Button 6", ITEM_ID_BUTTON6, joystick_get_state, &_buttons[OEArcadeButton6]);
-    
-    _orientation = _machine->system().flags & ORIENTATION_MASK;
 }
 
 - (void)osd_exit:(running_machine *)machine
@@ -158,7 +154,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     NSParameterAssert(_machine == machine);
 
     _machine->render().target_free(_target);
+    _machine->render().target_free(_uiTarget);
     _target = NULL;
+    _uiTarget = NULL;
 
     _machine = NULL;
 
@@ -292,10 +290,24 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (OEIntSize)aspectSize
 {
-    if (_orientation == 0)
-        return OEIntSizeMake(4, 3);
-    else
-        return OEIntSizeMake(3, 4);
+    if (_machine != NULL) {
+        switch (_machine->system().flags & ORIENTATION_MASK) {
+            case ROT0:
+            case ROT180:
+                return OEIntSizeMake(4, 3);
+                break;
+
+            case ROT90:
+            case ROT270:
+                return OEIntSizeMake(3, 4);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    return OEIntSizeMake(4, 3);
 }
 
 - (void)osd_update:(bool)skip_redraw
@@ -390,12 +402,12 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
                                    prim->bounds.x0, prim->bounds.y0,
                                    prim->bounds.x1, prim->bounds.y1,
                                    prim->bounds.x1, prim->bounds.y0 };
+            glVertexPointer(2, GL_FLOAT, 0, vertices);
 
             if(prim->texture.base == NULL)
             {
                 glColor4fv(color);
                 glLineWidth(1.0f);
-                glVertexPointer(2, GL_FLOAT, 0, vertices);
                 glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
             }
             else
@@ -420,14 +432,13 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
                 glEnable(GL_TEXTURE_RECTANGLE_EXT);
                 glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texture);
-                glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, _buffer ? width : texinfo.rowpixels, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _buffer ? _buffer : texinfo.base);
+                glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, _buffer ? width : texinfo.rowpixels, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _buffer ?: texinfo.base);
 
                 GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v,
                                         width * prim->texcoords.tl.u, height * prim->texcoords.tl.v,
                                         width * prim->texcoords.br.u, height * prim->texcoords.br.v,
                                         width * prim->texcoords.tr.u, height * prim->texcoords.tr.v };
 
-                glVertexPointer(2, GL_FLOAT, 0, vertices);
                 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
                 glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
                 glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
