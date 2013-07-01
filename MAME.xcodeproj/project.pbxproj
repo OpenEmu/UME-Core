@@ -24430,7 +24430,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
-					"-DMAME_DEBUG",
+					"-DNDEBUG",
 					"-DFLAC__NO_DLL",
 					"-DNATIVE_DRC=drcbe_x64",
 					"-fno-strict-aliasing",
@@ -24672,6 +24672,7 @@
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/mame/src/lib/libflac/include\"",
@@ -24696,6 +24697,7 @@
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/mame/src/lib/libflac/include\"",
