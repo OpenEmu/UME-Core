@@ -56,6 +56,7 @@
     NSString *_romDir;
     NSString *_driverName;
 
+    NSTimeInterval _frameInterval;
     OEIntSize _bufferSize;
 }
 @end
@@ -103,6 +104,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     
     // Sensible defaults
     _bufferSize = OEIntSizeMake(640, 480);
+    _frameInterval = 60;
 
     return self;
 }
@@ -126,8 +128,10 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     _machine->add_notifier(MACHINE_NOTIFY_EXIT, machine_notify_delegate(FUNC(mame_did_exit), machine));
 
     _target = _machine->render().target_alloc();
-    _target->set_max_update_rate(self.frameInterval);
 
+    _frameInterval = (NSTimeInterval) ATTOSECONDS_PER_SECOND / _machine->primary_screen->refresh_attoseconds();
+    NSLog(@"Refresh rate set to %f Hz", _frameInterval);
+    
     INT32 width = 0, height = 0;
     _target->compute_minimum_size(width, height);
     if(width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
@@ -259,15 +263,33 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 {
     astring err;
 
-    emu_options options = emu_options();
-    options.set_value(OPTION_SAMPLERATE, (int)[self audioSampleRate], OPTION_PRIORITY_HIGH, err);
+    emu_options options = emu_options();    
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_CFG_DIRECTORY,
+                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"cfg"] UTF8String],
+                      OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_NVRAM_DIRECTORY,
+                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"nvram"]UTF8String],
+                      OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_MEMCARD_DIRECTORY,
+                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"memcard"] UTF8String],
+                      OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_INPUT_DIRECTORY,
+                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"inp"] UTF8String],
+                      OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_DIFF_DIRECTORY,
+                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"diff"] UTF8String],
+                      OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_COMMENT_DIRECTORY,
+                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"comments"] UTF8String],
+                      OPTION_PRIORITY_HIGH, err);
+
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
-    options.set_value(OPTION_NVRAM_DIRECTORY, [[self batterySavesDirectoryPath] UTF8String], OPTION_PRIORITY_HIGH, err);
-    options.set_value(OPTION_CFG_DIRECTORY, [[self batterySavesDirectoryPath] UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_SAMPLERATE, (int)[self audioSampleRate], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SKIP_GAMEINFO, true, OPTION_PRIORITY_HIGH, err);
 #ifdef DEBUG
     options.set_value(OPTION_VERBOSE, true, OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_LOG, true, OPTION_PRIORITY_HIGH, err);
 #endif
 
     osx_osd_interface interface = osx_osd_interface(self);
@@ -462,6 +484,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 - (void)executeFrame
 {
     [self executeFrameSkippingFrame:NO];
+}
+
+- (NSTimeInterval)frameInterval
+{
+    return _frameInterval;
 }
 
 #pragma mark - Audio
