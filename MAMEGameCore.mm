@@ -49,12 +49,13 @@
     osd_event *_exitEvent;
 
     GLuint _texture;
+    GLuint _textureWidth;
+    GLuint _textureHeight;
     uint32_t *_buffer;
 
     NSString *_romDir;
     NSString *_driverName;
 
-    double _sampleRate;
     OEIntSize _bufferSize;
 }
 @end
@@ -101,7 +102,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     _exitEvent   = osd_event_alloc(FALSE, FALSE);
     
     // Sensible defaults
-    _sampleRate = 48000.0f;
     _bufferSize = OEIntSizeMake(640, 480);
 
     return self;
@@ -228,7 +228,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     if(_machine != NULL) _machine->schedule_exit();
 
     // Wait for MAME to shut down correctly
-    osd_event_wait(_exitEvent, osd_ticks_per_second() * 5);
+    osd_event_wait(_exitEvent, osd_ticks_per_second() * 10);
 
     if(_texture)
     {
@@ -260,7 +260,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     astring err;
 
     emu_options options = emu_options();
-    options.set_value(OPTION_SAMPLERATE, (int)_sampleRate, OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_SAMPLERATE, (int)[self audioSampleRate], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_NVRAM_DIRECTORY, [[self batterySavesDirectoryPath] UTF8String], OPTION_PRIORITY_HIGH, err);
@@ -293,8 +293,10 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (OEIntSize)aspectSize
 {
-    if (_machine != NULL) {
-        switch (_machine->system().flags & ORIENTATION_MASK) {
+    if(_machine != NULL)
+    {
+        switch(_machine->system().flags & ORIENTATION_MASK)
+        {
             case ROT0:
             case ROT180:
                 return OEIntSizeMake(4, 3);
@@ -326,37 +328,27 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     int status = osd_event_wait(_renderEvent, 5 * (osd_ticks_per_second() / self.frameInterval));
     if(status == FALSE) return;
 
-    render_primitive_list &primitives = _target->get_primitives();
-    primitives.acquire_lock();
-
     if(!_texture)
     {
         glEnable(GL_TEXTURE_RECTANGLE_EXT);
         glGenTextures(1, &_texture);
-        glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texture);
-
-        // I'm just setting up a big texture here. We should start smaller and resize as needed.
-        glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA8, 2000, 2000, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
     }
-
+    
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glDisable(GL_DEPTH_TEST);
-    glClearDepth(1.0f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_POINT_SMOOTH);
 
     glViewport(0.0, 0.0, (GLsizei)_bufferSize.width, (GLsizei)_bufferSize.height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, (GLdouble)_bufferSize.width, (GLdouble)_bufferSize.height, 0.0, 0.0, -1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
+    render_primitive_list &primitives = _target->get_primitives();
+    primitives.acquire_lock();
     for(render_primitive *prim = primitives.first(); prim != NULL; prim = prim->next())
     {
         GLfloat color[4];
@@ -416,7 +408,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
             else
             {
                 render_texinfo texinfo = prim->texture;
-                size_t width = texinfo.width, height = texinfo.height;
+                unsigned int width = texinfo.width, height = texinfo.height, rowpixels = texinfo.rowpixels;
 
                 if(_buffer) { free(_buffer); _buffer = NULL; }
 
@@ -429,13 +421,24 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
                     {
                         for(int x = 0; x < width; ++x)
                             *bufferPointer++ = texinfo.palette[*base++];
-                        base += texinfo.rowpixels - width;
+                        base += rowpixels - width;
                     }
+
+                    rowpixels = width;
                 }
 
                 glEnable(GL_TEXTURE_RECTANGLE_EXT);
                 glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texture);
-                glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, _buffer ? width : texinfo.rowpixels, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _buffer ?: texinfo.base);
+                // Resize if the texture isn't big enough
+                if(rowpixels > _textureWidth || height > _textureHeight)
+                {
+                    _textureWidth  = MAX(rowpixels, _textureWidth);
+                    _textureHeight = MAX(height, _textureHeight);
+
+                    glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA8, _textureWidth, _textureHeight, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _buffer ?: texinfo.base);
+                }
+                else
+                    glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, _buffer ? width : rowpixels, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _buffer ?: texinfo.base);
 
                 GLfloat texCoords[] = { width * prim->texcoords.bl.u, height * prim->texcoords.bl.v,
                                         width * prim->texcoords.tl.u, height * prim->texcoords.tl.v,
@@ -481,7 +484,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (double)audioSampleRate
 {
-    return _sampleRate;
+    return 48000;
 }
 
 - (NSUInteger)channelCount
