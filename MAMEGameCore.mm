@@ -266,22 +266,22 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     emu_options options = emu_options();    
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_CFG_DIRECTORY,
-                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"cfg"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"cfg"] UTF8String],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_NVRAM_DIRECTORY,
-                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"nvram"]UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"nvram"]UTF8String],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_MEMCARD_DIRECTORY,
-                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"memcard"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"memcard"] UTF8String],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_INPUT_DIRECTORY,
-                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"inp"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"inp"] UTF8String],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_DIFF_DIRECTORY,
-                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"diff"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"diff"] UTF8String],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_COMMENT_DIRECTORY,
-                      [[[self batterySavesDirectoryPath] stringByAppendingPathComponent:@"comments"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"comments"] UTF8String],
                       OPTION_PRIORITY_HIGH, err);
 
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
