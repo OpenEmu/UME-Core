@@ -77,12 +77,15 @@ bool path_iterator::next(astring &buffer, const char *name)
 	if (m_index != 0 && *m_current == 0)
 		return false;
 
-	// copy up to the next semicolon
-	const char *semi = strchr(m_current, ';');
-	if (semi == NULL)
-		semi = m_current + strlen(m_current);
-	buffer.cpy(m_current, semi - m_current);
-	m_current = (*semi == 0) ? semi : semi + 1;
+    if(m_current != NULL)
+    {
+        // copy up to the next semicolon
+        const char *semi = strchr(m_current, ';');
+        if (semi == NULL)
+            semi = m_current + strlen(m_current);
+        buffer.cpy(m_current, semi - m_current);
+        m_current = (*semi == 0) ? semi : semi + 1;
+    }
 
 	// append the name if we have one
 	if (name != NULL)
