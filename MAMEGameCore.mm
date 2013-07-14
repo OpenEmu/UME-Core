@@ -126,6 +126,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     _machine = machine;
 
     _machine->add_notifier(MACHINE_NOTIFY_EXIT, machine_notify_delegate(FUNC(mame_did_exit), machine));
+    _machine->save().register_postsave(save_prepost_delegate(FUNC(_OESaveStateCallback), machine));
+    _machine->save().register_postload(save_prepost_delegate(FUNC(_OESaveStateCallback), machine));
 
     _target = _machine->render().target_alloc();
 
@@ -540,18 +542,33 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 #pragma mark - Save State
 
-// Both loading and saving state is broken, crashes
+static void *_OESaveStateBlock;
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName
+static void _OESaveStateCallback(running_machine *machine)
 {
-    //if(_machine != NULL) _machine->schedule_save([fileName UTF8String]);
-    return NO;
+    void (^block)(BOOL) = (__bridge_transfer void(^)(BOOL))_OESaveStateBlock;
+
+    block(YES);
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL))block
 {
-    //if(_machine != NULL) _machine->schedule_load([fileName UTF8String]);
-    return NO;
+    _OESaveStateBlock = (__bridge_retained void *)[block copy];
+    
+    if(_machine != NULL)
+        _machine->schedule_save([fileName UTF8String]);
+    else
+        block(NO);
+}
+
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL))block
+{
+    _OESaveStateBlock = (__bridge_retained void *)[block copy];
+
+    if(_machine != NULL)
+        _machine->schedule_load([fileName UTF8String]);
+    else
+        block(NO);
 }
 
 @end

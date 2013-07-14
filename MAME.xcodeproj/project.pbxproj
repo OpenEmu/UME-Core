@@ -5001,9 +5001,9 @@
 		D090D7EB17643E1B004DC3EB /* libjpeg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libjpeg.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D090D7F317643E23004DC3EB /* libportmidi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libportmidi.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0AADE2F176381FB00759E26 /* MAME_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAME_Prefix.pch; sourceTree = "<group>"; };
-		D0AADE30176382F900759E26 /* OpenEmuBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenEmuBase.framework; path = ../Build/Products/Debug/OpenEmuBase.framework; sourceTree = "<group>"; };
-		D0AADE331763838A00759E26 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		D0AADE341763838A00759E26 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		D0AADE30176382F900759E26 /* OpenEmuBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEmuBase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0AADE331763838A00759E26 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		D0AADE341763838A00759E26 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D0AADE39176385B200759E26 /* aperture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aperture.png; sourceTree = "<group>"; };
 		D0AADE3A176385B200759E26 /* white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = white.png; sourceTree = "<group>"; };
 		D0AADE46176385B200759E26 /* 32x.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = 32x.xml; sourceTree = "<group>"; };
