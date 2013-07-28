@@ -546,12 +546,12 @@ static void *_OESaveStateBlock;
 
 static void _OESaveStateCallback(running_machine *machine)
 {
-    void (^block)(BOOL) = (__bridge_transfer void(^)(BOOL))_OESaveStateBlock;
+    void (^block)(BOOL) = (__bridge_transfer void(^)(BOOL, NSError *))_OESaveStateBlock;
 
-    block(YES);
+    block(YES, nil);
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL))block
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
     _OESaveStateBlock = (__bridge_retained void *)[block copy];
     
@@ -560,18 +560,18 @@ static void _OESaveStateCallback(running_machine *machine)
     else
     {
         NSLog(@"This game does not support save states!");
-        block(NO);
+        block(NO, nil);
     }
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL))block
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
     _OESaveStateBlock = (__bridge_retained void *)[block copy];
 
     if(_machine != NULL && _machine->system().flags & GAME_SUPPORTS_SAVE)
         _machine->schedule_load([fileName UTF8String]);
     else
-        block(NO);
+        block(NO, nil);
 }
 
 @end
