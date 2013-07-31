@@ -66,6 +66,11 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
     NSLog(@"MAME: %@", [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:argptr]);
 }
 
+static void error_callback(running_machine &machine, const char *string)
+{
+    NSLog(@"MAME: %s", string);
+}
+
 static void mame_did_exit(running_machine *machine)
 {
     osx_osd_interface &interface = dynamic_cast<osx_osd_interface &>(machine->osd());
@@ -126,6 +131,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     _machine = machine;
 
     _machine->add_notifier(MACHINE_NOTIFY_EXIT, machine_notify_delegate(FUNC(mame_did_exit), machine));
+    _machine->add_logerror_callback(error_callback);
     _machine->save().register_postsave(save_prepost_delegate(FUNC(_OESaveStateCallback), machine));
     _machine->save().register_postload(save_prepost_delegate(FUNC(_OESaveStateCallback), machine));
 
