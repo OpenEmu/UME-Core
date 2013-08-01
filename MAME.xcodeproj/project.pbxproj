@@ -4842,6 +4842,20 @@
 			remoteGlobalIDString = 8C416BA217A5A83900F55D09;
 			remoteInfo = ocore;
 		};
+		8C66310717AAC9F60063E898 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D00A06821763762F00C99008 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0AAFF7A1763B87B00759E26;
+			remoteInfo = cpu;
+		};
+		8C66310917AACA5D0063E898 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D00A06821763762F00C99008 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0BA5AB41764E4B60033A910;
+			remoteInfo = layouts;
+		};
 		8CBB798717A7E2170049CF34 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D00A06821763762F00C99008 /* Project object */;
@@ -19994,6 +20008,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8C66310817AAC9F60063E898 /* PBXTargetDependency */,
 			);
 			name = dasm;
 			productName = dasm;
@@ -20350,6 +20365,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8C66310A17AACA5D0063E898 /* PBXTargetDependency */,
 			);
 			name = emu;
 			productName = core;
@@ -24474,6 +24490,16 @@
 			isa = PBXTargetDependency;
 			target = 8C416BA217A5A83900F55D09 /* ocore */;
 			targetProxy = 8C416BF017A5AB7B00F55D09 /* PBXContainerItemProxy */;
+		};
+		8C66310817AAC9F60063E898 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0AAFF7A1763B87B00759E26 /* cpu */;
+			targetProxy = 8C66310717AAC9F60063E898 /* PBXContainerItemProxy */;
+		};
+		8C66310A17AACA5D0063E898 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0BA5AB41764E4B60033A910 /* layouts */;
+			targetProxy = 8C66310917AACA5D0063E898 /* PBXContainerItemProxy */;
 		};
 		8CBB798817A7E2170049CF34 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
