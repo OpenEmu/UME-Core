@@ -150,6 +150,7 @@
 		8C416BFC17A5ADCF00F55D09 /* osdnet.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAFD9D176385DF00759E26 /* osdnet.c */; };
 		8C416BFD17A5ADCF00F55D09 /* osdnet.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAFD9E176385DF00759E26 /* osdnet.h */; };
 		8CA9071017A83C08001591B7 /* osx_osd_interface.mm in Sources */ = {isa = PBXBuildFile; fileRef = D00DAE0B176E1E6900F58FBB /* osx_osd_interface.mm */; };
+		8CB8852317AADC18001E5AD3 /* license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8CB8851C17AADC10001E5AD3 /* license.txt */; };
 		8CBB796917A7CE160049CF34 /* filter.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE46B176385B900759E26 /* filter.c */; };
 		8CBB796A17A7CE160049CF34 /* filter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0AAE46C176385B900759E26 /* filter.h */; };
 		8CBB796B17A7CE250049CF34 /* flt_rc.c in Sources */ = {isa = PBXBuildFile; fileRef = D0AAE46D176385B900759E26 /* flt_rc.c */; };
@@ -5018,6 +5019,16 @@
 		8C416BA317A5A83900F55D09 /* libocore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libocore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C416BE017A5AAA000F55D09 /* makedep */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = makedep; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C416BF817A5AB7B00F55D09 /* verinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = verinfo; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CB8851917AADC10001E5AD3 /* config.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.txt; sourceTree = "<group>"; };
+		8CB8851A17AADC10001E5AD3 /* hlsl.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = hlsl.txt; sourceTree = "<group>"; };
+		8CB8851B17AADC10001E5AD3 /* imgtool.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = imgtool.txt; sourceTree = "<group>"; };
+		8CB8851C17AADC10001E5AD3 /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
+		8CB8851D17AADC10001E5AD3 /* m6502.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = m6502.txt; sourceTree = "<group>"; };
+		8CB8851E17AADC10001E5AD3 /* mame.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = mame.txt; sourceTree = "<group>"; };
+		8CB8851F17AADC10001E5AD3 /* newvideo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = newvideo.txt; sourceTree = "<group>"; };
+		8CB8852017AADC10001E5AD3 /* nscsi.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = nscsi.txt; sourceTree = "<group>"; };
+		8CB8852117AADC10001E5AD3 /* SDL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = SDL.txt; sourceTree = "<group>"; };
+		8CB8852217AADC10001E5AD3 /* windows.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = windows.txt; sourceTree = "<group>"; };
 		D0011E4B176E16C0004CA8E0 /* linflash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = linflash.c; sourceTree = "<group>"; };
 		D0011E4C176E16C0004CA8E0 /* linflash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linflash.h; sourceTree = "<group>"; };
 		D00A068A1763763000C99008 /* MAME.oecoreplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MAME.oecoreplugin; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -11382,6 +11393,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8CB8851817AADC10001E5AD3 /* docs */ = {
+			isa = PBXGroup;
+			children = (
+				8CB8851917AADC10001E5AD3 /* config.txt */,
+				8CB8851A17AADC10001E5AD3 /* hlsl.txt */,
+				8CB8851B17AADC10001E5AD3 /* imgtool.txt */,
+				8CB8851C17AADC10001E5AD3 /* license.txt */,
+				8CB8851D17AADC10001E5AD3 /* m6502.txt */,
+				8CB8851E17AADC10001E5AD3 /* mame.txt */,
+				8CB8851F17AADC10001E5AD3 /* newvideo.txt */,
+				8CB8852017AADC10001E5AD3 /* nscsi.txt */,
+				8CB8852117AADC10001E5AD3 /* SDL.txt */,
+				8CB8852217AADC10001E5AD3 /* windows.txt */,
+			);
+			path = docs;
+			sourceTree = "<group>";
+		};
 		D00A06811763762F00C99008 = {
 			isa = PBXGroup;
 			children = (
@@ -11508,6 +11536,7 @@
 			isa = PBXGroup;
 			children = (
 				D0AADE38176385B200759E26 /* artwork */,
+				8CB8851817AADC10001E5AD3 /* docs */,
 				D0AADE45176385B200759E26 /* hash */,
 				D0AADF3B176385B300759E26 /* hlsl */,
 				D0AADF47176385B300759E26 /* keymaps */,
@@ -20553,6 +20582,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8CB8852317AADC18001E5AD3 /* license.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
