@@ -68,7 +68,7 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
 
 static void error_callback(running_machine &machine, const char *string)
 {
-    NSLog(@"MAME: %s", string);
+    //NSLog(@"MAME: %s", string);
 }
 
 static void mame_did_exit(running_machine *machine)
