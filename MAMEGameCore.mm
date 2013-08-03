@@ -552,7 +552,7 @@ static void *_OESaveStateBlock;
 
 static void _OESaveStateCallback(running_machine *machine)
 {
-    void (^block)(BOOL) = (__bridge_transfer void(^)(BOOL, NSError *))_OESaveStateBlock;
+    void (^block)(BOOL, NSError *) = (__bridge_transfer void(^)(BOOL, NSError *))_OESaveStateBlock;
 
     block(YES, nil);
 }
