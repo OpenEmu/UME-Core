@@ -244,6 +244,10 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
     if(_texture)
     {
+        // We need a OpenGL context for this
+        [[self renderDelegate] willRenderFrameOnAlternateThread];
+        [[self renderDelegate] startRenderingOnAlternateThread];
+        
         glDeleteTextures(1, &_texture);
         _texture = 0;
     }
