@@ -43,8 +43,8 @@
     running_machine *_machine;
     render_target *_target;
     render_target *_uiTarget;
-    INT32 _buttons[OEArcadeButtonCount];
-    INT32 _axes[INPUT_MAX_AXIS];
+    INT32 _buttons[8][OEArcadeButtonCount];
+    INT32 _axes[8][INPUT_MAX_AXIS];
     osd_event *_renderEvent;
     osd_event *_exitEvent;
 
@@ -148,20 +148,24 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     _uiTarget = _machine->render().target_alloc();
     _target->manager().set_ui_target(*_uiTarget);
 
-    input_device *input = _machine->input().device_class(DEVICE_CLASS_JOYSTICK).add_device("OpenEmu", NULL);
-    input->add_item("X Axis", ITEM_ID_XAXIS, joystick_get_state, &_axes[0]);
-    input->add_item("Y Axis", ITEM_ID_YAXIS, joystick_get_state, &_axes[1]);
-    input->add_item("Start", ITEM_ID_START, joystick_get_state, &_buttons[OEArcadeButtonP1Start]);
-    input->add_item("Select", ITEM_ID_SELECT, joystick_get_state, &_buttons[OEArcadeButtonInsertCoin]);
-    input->add_item("Button 1", ITEM_ID_BUTTON1, joystick_get_state, &_buttons[OEArcadeButton1]);
-    input->add_item("Button 2", ITEM_ID_BUTTON2, joystick_get_state, &_buttons[OEArcadeButton2]);
-    input->add_item("Button 3", ITEM_ID_BUTTON3, joystick_get_state, &_buttons[OEArcadeButton3]);
-    input->add_item("Button 4", ITEM_ID_BUTTON4, joystick_get_state, &_buttons[OEArcadeButton4]);
-    input->add_item("Button 5", ITEM_ID_BUTTON5, joystick_get_state, &_buttons[OEArcadeButton5]);
-    input->add_item("Button 6", ITEM_ID_BUTTON6, joystick_get_state, &_buttons[OEArcadeButton6]);
+    // Add devices for 8 players
+    for (int i = 0; i < 8; i++) {
+        input_device *input = _machine->input().device_class(DEVICE_CLASS_JOYSTICK).add_device([[NSString stringWithFormat:@"OpenEmu Device %d", i] UTF8String], NULL);
+        input->add_item("X Axis", ITEM_ID_XAXIS, joystick_get_state, &_axes[i][0]);
+        input->add_item("Y Axis", ITEM_ID_YAXIS, joystick_get_state, &_axes[i][1]);
+        input->add_item("Start", ITEM_ID_START, joystick_get_state, &_buttons[i][OEArcadeButtonP1Start]);
+        input->add_item("Select", ITEM_ID_SELECT, joystick_get_state, &_buttons[i][OEArcadeButtonInsertCoin]);
+        input->add_item("Button 1", ITEM_ID_BUTTON1, joystick_get_state, &_buttons[i][OEArcadeButton1]);
+        input->add_item("Button 2", ITEM_ID_BUTTON2, joystick_get_state, &_buttons[i][OEArcadeButton2]);
+        input->add_item("Button 3", ITEM_ID_BUTTON3, joystick_get_state, &_buttons[i][OEArcadeButton3]);
+        input->add_item("Button 4", ITEM_ID_BUTTON4, joystick_get_state, &_buttons[i][OEArcadeButton4]);
+        input->add_item("Button 5", ITEM_ID_BUTTON5, joystick_get_state, &_buttons[i][OEArcadeButton5]);
+        input->add_item("Button 6", ITEM_ID_BUTTON6, joystick_get_state, &_buttons[i][OEArcadeButton6]);
+    }
     
+    // Special keys
     input_device *inputKeys = _machine->input().device_class(DEVICE_CLASS_KEYBOARD).add_device("OpenEmu Keys", NULL);
-    inputKeys->add_item("Service", ITEM_ID_F2, joystick_get_state, &_buttons[OEArcadeButtonService]);
+    inputKeys->add_item("Service", ITEM_ID_F2, joystick_get_state, &_buttons[0][OEArcadeButtonService]);
 }
 
 - (void)osd_exit:(running_machine *)machine
@@ -535,9 +539,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)setState:(BOOL)pressed ofButton:(OEArcadeButton)button forPlayer:(NSUInteger)player
 {
-    _buttons[button] = pressed ? 1 : 0;
-    _axes[0] = _buttons[OEArcadeButtonLeft] ? INPUT_ABSOLUTE_MIN : (_buttons[OEArcadeButtonRight] ? INPUT_ABSOLUTE_MAX : 0);
-    _axes[1] = _buttons[OEArcadeButtonUp] ? INPUT_ABSOLUTE_MIN : (_buttons[OEArcadeButtonDown] ? INPUT_ABSOLUTE_MAX : 0);
+    _buttons[player-1][button] = pressed ? 1 : 0;
+    _axes[player-1][0] = _buttons[player-1][OEArcadeButtonLeft] ? INPUT_ABSOLUTE_MIN : (_buttons[player-1][OEArcadeButtonRight] ? INPUT_ABSOLUTE_MAX : 0);
+    _axes[player-1][1] = _buttons[player-1][OEArcadeButtonUp] ? INPUT_ABSOLUTE_MIN : (_buttons[player-1][OEArcadeButtonDown] ? INPUT_ABSOLUTE_MAX : 0);
 }
 
 - (oneway void)didPushArcadeButton:(OEArcadeButton)button forPlayer:(NSUInteger)player
