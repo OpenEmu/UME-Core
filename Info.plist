@@ -35,6 +35,6 @@
 	<key>SUEnableAutomaticChecks</key>
 	<string>1</string>
 	<key>SUFeedURL</key>
-	<string>http://openemu.org/updater/mame_appcast.xml</string>
+	<string>https://raw.github.com/OpenEmu/OpenEmu-Update/master/mame_appcast.xml</string>
 </dict>
 </plist>
