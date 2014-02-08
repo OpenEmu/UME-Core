@@ -184,7 +184,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 #pragma mark - Execution
 
-- (BOOL)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     _romDir = [path stringByDeletingLastPathComponent];
     if(!_romDir) return NO;
