@@ -281,6 +281,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
     emu_options options = emu_options();    
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_SAMPLEPATH, 
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"samples"] UTF8String], 
+                      OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_CFG_DIRECTORY,
                       [[[self supportDirectoryPath] stringByAppendingPathComponent:@"cfg"] UTF8String],
                       OPTION_PRIORITY_HIGH, err);
