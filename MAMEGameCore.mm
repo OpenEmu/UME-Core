@@ -58,6 +58,8 @@
 
     NSTimeInterval _frameInterval;
     OEIntSize _bufferSize;
+
+    BOOL _initializing;
 }
 @end
 
@@ -103,6 +105,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     {
         return nil;
     }
+
+    _initializing = YES;
 
     _renderEvent = osd_event_alloc(FALSE, FALSE);
     _exitEvent   = osd_event_alloc(FALSE, FALSE);
@@ -166,6 +170,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     // Special keys
     input_device *inputKeys = _machine->input().device_class(DEVICE_CLASS_KEYBOARD).add_device("OpenEmu Keys", NULL);
     inputKeys->add_item("Service", ITEM_ID_F2, joystick_get_state, &_buttons[0][OEArcadeButtonService]);
+
+    _initializing = NO;
 }
 
 - (void)osd_exit:(running_machine *)machine
@@ -584,6 +590,9 @@ static void _OESaveStateCallback(running_machine *machine)
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
     _OESaveStateBlock = (__bridge_retained void *)[block copy];
+
+    // Wait until machine is initialized and ready to load a save state
+    while(_initializing) usleep(100);
 
     if(_machine != NULL && _machine->system().flags & GAME_SUPPORTS_SAVE)
         _machine->schedule_load([fileName UTF8String]);
