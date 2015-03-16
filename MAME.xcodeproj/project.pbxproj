@@ -4698,7 +4698,7 @@
 			outputFiles = (
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.lh",
 			);
-			script = "\"${TARGET_BUILD_DIR}/file2str\" \"${INPUT_FILE_PATH}\" \"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.lh\" \"layout_${INPUT_FILE_BASE}\"";
+			script = "\"${BUILT_PRODUCTS_DIR}/file2str\" \"${INPUT_FILE_PATH}\" \"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.lh\" \"layout_${INPUT_FILE_BASE}\"";
 		};
 		D0BA5AC01764E4ED0033A910 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -4709,7 +4709,7 @@
 			outputFiles = (
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.fh",
 			);
-			script = "\"${TARGET_BUILD_DIR}/png2bdc\" \"${INPUT_FILE_PATH}\" \"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.bdc\"\n\"${TARGET_BUILD_DIR}/file2str\" \"${INPUT_FILE_PATH}\" \"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.fh\" \"font_${INPUT_FILE_BASE}\" \"UINT8\"";
+			script = "\"${BUILT_PRODUCTS_DIR}/png2bdc\" \"${INPUT_FILE_PATH}\" \"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.bdc\"\n\"${BUILT_PRODUCTS_DIR}/file2str\" \"${INPUT_FILE_PATH}\" \"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.fh\" \"font_${INPUT_FILE_BASE}\" \"UINT8\"";
 		};
 /* End PBXBuildRule section */
 
@@ -20542,7 +20542,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${TARGET_BUILD_DIR}/m68kmake\" \"${SRCROOT}/mame/src/emu/cpu/m68000\" \"${SRCROOT}/mame/src/emu/cpu/m68000/m68k_in.c\"\n";
+			shellScript = "\"${BUILT_PRODUCTS_DIR}/m68kmake\" \"${SRCROOT}/mame/src/emu/cpu/m68000\" \"${SRCROOT}/mame/src/emu/cpu/m68000/m68k_in.c\"\n";
 		};
 		D0BA5AA61764E3570033A910 /* Generate M6502 source files */ = {
 			isa = PBXShellScriptBuildPhase;
