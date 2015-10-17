@@ -24588,10 +24588,9 @@
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_TESTABILITY = YES;
+				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu89;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -24601,6 +24600,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/osd\"",
@@ -24613,8 +24613,7 @@
 					"\"$(SRCROOT)/mame/src/osd\"",
 					"\"$(SRCROOT)/mame/src/osd/sdl\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				ONLY_ACTIVE_ARCH = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = (
 					"-DMAME_DEBUG",
 					"-DFLAC__NO_DLL",
@@ -24625,9 +24624,9 @@
 					"$(OTHER_CFLAGS)",
 					"-Woverloaded-virtual",
 				);
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
-				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wcast-align",
@@ -24639,9 +24638,9 @@
 					"-Wno-cast-align",
 					"-Wno-tautological-compare",
 					"-Wno-constant-logical-operand",
-					"-Wno-format-security",
 					"-Wno-shift-count-overflow",
 					"-Wno-self-assign-field",
+					"-Wno-unused-local-typedef",
 				);
 			};
 			name = Debug;
@@ -24656,14 +24655,16 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu89;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = MAME_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/osd\"",
@@ -24676,8 +24677,7 @@
 					"\"$(SRCROOT)/mame/src/osd\"",
 					"\"$(SRCROOT)/mame/src/osd/sdl\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				ONLY_ACTIVE_ARCH = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = (
 					"-DNDEBUG",
 					"-DFLAC__NO_DLL",
@@ -24689,9 +24689,9 @@
 					"$(OTHER_CFLAGS)",
 					"-Woverloaded-virtual",
 				);
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
-				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wcast-align",
@@ -24703,9 +24703,9 @@
 					"-Wno-cast-align",
 					"-Wno-tautological-compare",
 					"-Wno-constant-logical-operand",
-					"-Wno-format-security",
 					"-Wno-shift-count-overflow",
 					"-Wno-self-assign-field",
+					"-Wno-unused-local-typedef",
 				);
 			};
 			name = Release;
