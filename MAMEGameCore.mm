@@ -363,9 +363,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     osd_event_set(_renderEvent);
 }
 
-- (void)executeFrameSkippingFrame:(BOOL)skip
+- (void)executeFrame
 {
-    if(skip || _target == NULL) return;
+    if(self.shouldSkipFrame || _target == NULL) return;
 
     // Only wait for 5 frames or so maximum
     int status = osd_event_wait(_renderEvent, 5 * (osd_ticks_per_second() / self.frameInterval));
@@ -500,11 +500,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     glFlushRenderAPPLE();
 
     primitives.release_lock();
-}
-
-- (void)executeFrame
-{
-    [self executeFrameSkippingFrame:NO];
 }
 
 - (NSTimeInterval)frameInterval
