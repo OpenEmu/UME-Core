@@ -238,11 +238,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)startEmulation
 {
-    if(!isRunning)
-    {
-        [super startEmulation];
-        [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
-    }
+    [super startEmulation];
+    [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
 }
 
 - (void)stopEmulation
@@ -315,18 +312,18 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
     osx_osd_interface interface = osx_osd_interface(self);
 
-    NSLog(@"MAME: Starting game execution thread");
+    DLog(@"MAME: Starting game execution thread");
     
     mame_execute(options, interface);
 
-    NSLog(@"MAME: Game execution thread exiting");
+    DLog(@"MAME: Game execution thread exiting");
 }
 
 #pragma mark - Video
 
-- (BOOL)rendersToOpenGL
+- (OEGameCoreRendering)gameCoreRendering
 {
-    return YES;
+    return OEGameCoreRenderingOpenGL2Video;
 }
 
 - (OEIntSize)bufferSize
