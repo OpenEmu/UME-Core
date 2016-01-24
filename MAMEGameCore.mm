@@ -331,16 +331,15 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)osd_update:(bool)skip_redraw
 {
-    dispatch_semaphore_signal(_renderEvent);
+    if (!skip_redraw)
+    {
+        dispatch_semaphore_wait(_renderEvent, dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC));
+    }
 }
 
 - (void)executeFrame
 {
     if(self.shouldSkipFrame || _target == NULL) return;
-
-    // Only wait for 5 frames or so maximum
-    long status = dispatch_semaphore_wait(_renderEvent, 5 * NSEC_PER_SEC);
-    if(status < 0) return;
 
     if(!_texture)
     {
@@ -471,6 +470,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     glFlushRenderAPPLE();
 
     primitives.release_lock();
+    dispatch_semaphore_signal(_renderEvent);
 }
 
 - (NSTimeInterval)frameInterval
