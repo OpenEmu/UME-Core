@@ -215,8 +215,10 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
         {
             std::string *output = new std::string();
             auditor.summarize(drivlist.driver().name, output);
-            NSLog(@"MAME: Audit failed with output:\n%s", output->c_str());
+            NSString *message = [NSString stringWithCString:output->c_str() encoding:NSASCIIStringEncoding];
             delete output;
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey: message };
+            *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:-1 userInfo:userInfo];
         }
     }
     
