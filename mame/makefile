@@ -39,7 +39,6 @@ LIBS   := \
 	$(LIBDIR)/liblsqlite3.a \
 	$(LIBDIR)/liblua.a \
 	$(LIBDIR)/libnetlist.a \
-	$(LIBDIR)/libocore_osdmini.a \
 	$(LIBDIR)/libosd_osdmini.a \
 	$(LIBDIR)/libportaudio.a \
 	$(LIBDIR)/libportmidi.a \
@@ -54,9 +53,14 @@ $(info Generating $(OUTPUT) $(TARGET)_$(SUBTARGET)-$(ARCHITECTURE) using $(CONFI
 
 libmame: libmame_$(ARCHITECTURE).a
 
-libmame_$(ARCHITECTURE).a: libmain.a $(LIBS) 
+libmame_$(ARCHITECTURE).a: libmain.a libocore_osdmimi_x.a $(LIBS) 
 	libtool -s -static -o libmame_$(ARCHITECTURE).a $?
 	
 libmain.a: $(OBJECTS)
 	ar -rcs libmain.a $(OBJECTS)
+	
+libocore_osdmimi_x.a: $(LIBDIR)/libocore_osdmini.a
+	ar -x $?
+	rm minidir.o
+	ar -rcs libocore_osdmimi_x.a *.o
 	

@@ -54,6 +54,9 @@
 
     NSString *_romDir;
     NSString *_driverName;
+    NSString *_stateDir;
+    NSString *_stateFile;
+    NSFileManager *_fileManager;
 
     NSTimeInterval _frameInterval;
     OEIntSize _bufferSize;
@@ -95,6 +98,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     // Sensible defaults
     _bufferSize = OEIntSizeMake(640, 480);
     _frameInterval = 60;
+    _fileManager = [NSFileManager new];
 
     return self;
 }
@@ -114,6 +118,17 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 - (void)osd_init:(running_machine *)machine
 {
     _machine = machine;
+    
+    _stateDir  = [NSString pathWithComponents:@[NSTemporaryDirectory(), @"openemu", @"mame"]];
+    NSString *basename = [NSString stringWithCString:_machine->basename() encoding:NSASCIIStringEncoding];
+    _stateFile = [NSString pathWithComponents:@[_stateDir, basename, @"gamestate.sta"]];
+    [_fileManager createDirectoryAtPath:[_stateFile stringByDeletingLastPathComponent]
+            withIntermediateDirectories:YES
+                             attributes:nil
+                                  error:nil];
+
+    std::string err;
+    _machine->options().set_value(OPTION_STATE_DIRECTORY, [_stateDir UTF8String], OPTION_PRIORITY_HIGH, err);
 
     _machine->add_logerror_callback(error_callback);
     _target = _machine->render().target_alloc();
@@ -166,7 +181,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 {
     _romDir = [path stringByDeletingLastPathComponent];
     if(!_romDir) return NO;
-
+    
     // Need a better way to identify the ROM driver from the archive path
 
     // The code below works by hashing the individual files and checking each
@@ -276,6 +291,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SAMPLERATE, (int)[self audioSampleRate], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SKIP_GAMEINFO, true, OPTION_PRIORITY_HIGH, err);
+
 #if 0
     options.set_value(OPTION_VERBOSE, true, OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_LOG, true, OPTION_PRIORITY_HIGH, err);
@@ -331,7 +347,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)osd_update:(bool)skip_redraw
 {
-    if (!skip_redraw)
+    if (!skip_redraw && !_machine->save_or_load_pending())
     {
         dispatch_semaphore_wait(_renderEvent, dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC));
     }
@@ -539,8 +555,10 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     BOOL saved = NO;
     if(_machine != NULL && _machine->system().flags & MACHINE_SUPPORTS_SAVE)
     {
-        _machine->schedule_save([fileName UTF8String]);
+        _machine->schedule_save("gamestate");
         [self waitForSaveOrLoad];
+        [_fileManager moveItemAtPath:_stateFile toPath:fileName error:nil];
+        
         saved = YES;
     }
     
@@ -555,7 +573,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     BOOL loaded = NO;
     if(_machine != NULL && _machine->system().flags & MACHINE_SUPPORTS_SAVE)
     {
-        _machine->schedule_load([fileName UTF8String]);
+        [_fileManager removeItemAtPath:_stateFile error:nil];
+        [_fileManager copyItemAtPath:fileName toPath:_stateFile error:nil];
+        _machine->schedule_load("gamestate");
         [self waitForSaveOrLoad];
         loaded = YES;
     }
