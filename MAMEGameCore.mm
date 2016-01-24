@@ -65,14 +65,9 @@
 
 @end
 
-static void output_callback(delegate_late_bind *param, const char *format, va_list argptr)
-{
-    NSLog(@"MAME: %@", [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:argptr]);
-}
-
 static void error_callback(const running_machine &machine, const char *string)
 {
-    //NSLog(@"MAME: %s", string);
+    // NSLog(@"MAME: %s", string);
 }
 
 static INT32 joystick_get_state(void *device_internal, void *item_internal)
@@ -83,16 +78,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 @implementation MAMEGameCore
 
 #pragma mark - Lifecycle
-
-+ (void)initialize
-{
-//    mame_set_output_channel(OUTPUT_CHANNEL_ERROR, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-//    mame_set_output_channel(OUTPUT_CHANNEL_WARNING, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-//    mame_set_output_channel(OUTPUT_CHANNEL_INFO, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-//    mame_set_output_channel(OUTPUT_CHANNEL_DEBUG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-//    mame_set_output_channel(OUTPUT_CHANNEL_VERBOSE, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-//    mame_set_output_channel(OUTPUT_CHANNEL_LOG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-}
 
 - (id)init
 {
