@@ -24,19 +24,19 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "osdepend.h"
+#include "osdobj_common.h"
 
 @class MAMEGameCore;
 
-class osx_osd_interface : public osd_interface
+class osx_osd_interface : public osd_common_t
 {
 public:
-    osx_osd_interface(MAMEGameCore *);
+    osx_osd_interface(MAMEGameCore *, osd_options &options);
     MAMEGameCore *core() const { return m_core; }
     void init(running_machine &machine);
     void update(bool skip_redraw);
     void update_audio_stream(const INT16 *buffer, int samples_this_frame);
-
+    void osd_exit();
 private:
     MAMEGameCore *m_core;
 };

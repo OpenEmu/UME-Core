@@ -1,0 +1,52 @@
+// license:BSD-3-Clause
+// copyright-holders:Aaron Giles
+/***************************************************************************
+
+    dinvram.h
+
+    Device NVRAM interfaces.
+
+***************************************************************************/
+
+#pragma once
+
+#ifndef __EMU_H__
+#error Dont include this file directly; include emu.h instead.
+#endif
+
+#ifndef __DINVRAM_H__
+#define __DINVRAM_H__
+
+
+//**************************************************************************
+//  TYPE DEFINITIONS
+//**************************************************************************
+
+
+// ======================> device_nvram_interface
+
+// class representing interface-specific live nvram
+class device_nvram_interface : public device_interface
+{
+public:
+	// construction/destruction
+	device_nvram_interface(const machine_config &mconfig, device_t &device);
+	virtual ~device_nvram_interface();
+
+	// public accessors... for now
+	void nvram_reset() { nvram_default(); }
+	void nvram_load(emu_file &file) { nvram_read(file); }
+	void nvram_save(emu_file &file) { nvram_write(file); }
+
+protected:
+	// derived class overrides
+	virtual void nvram_default() = 0;
+	virtual void nvram_read(emu_file &file) = 0;
+	virtual void nvram_write(emu_file &file) = 0;
+};
+
+// iterator
+typedef device_interface_iterator<device_nvram_interface> nvram_interface_iterator;
+
+
+#endif  /* __DINVRAM_H__ */

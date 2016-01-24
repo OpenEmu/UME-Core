@@ -30,11 +30,10 @@
 #import <OpenGL/gl.h>
 
 #include "emu.h"
+#include "render.h"
 #include "emuopts.h"
 #include "audit.h"
 #include "mame.h"
-
-#include "sdl/sdlsync.h"
 
 #include "osx_osd_interface.h"
 
@@ -42,11 +41,11 @@
 {
     running_machine *_machine;
     render_target *_target;
-    render_target *_uiTarget;
     INT32 _buttons[8][OEArcadeButtonCount];
     INT32 _axes[8][INPUT_MAX_AXIS];
-    osd_event *_renderEvent;
-    osd_event *_exitEvent;
+    
+    dispatch_semaphore_t _renderEvent;
+    dispatch_semaphore_t _exitEvent;
 
     GLuint _texture;
     GLuint _textureWidth;
@@ -61,6 +60,9 @@
 
     BOOL _initializing;
 }
+
+- (void)waitForSaveOrLoad;
+
 @end
 
 static void output_callback(delegate_late_bind *param, const char *format, va_list argptr)
@@ -68,15 +70,9 @@ static void output_callback(delegate_late_bind *param, const char *format, va_li
     NSLog(@"MAME: %@", [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:argptr]);
 }
 
-static void error_callback(running_machine &machine, const char *string)
+static void error_callback(const running_machine &machine, const char *string)
 {
     //NSLog(@"MAME: %s", string);
-}
-
-static void mame_did_exit(running_machine *machine)
-{
-    osx_osd_interface &interface = dynamic_cast<osx_osd_interface &>(machine->osd());
-    [interface.core() osd_exit:machine];
 }
 
 static INT32 joystick_get_state(void *device_internal, void *item_internal)
@@ -90,12 +86,12 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 + (void)initialize
 {
-    mame_set_output_channel(OUTPUT_CHANNEL_ERROR, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-    mame_set_output_channel(OUTPUT_CHANNEL_WARNING, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-    mame_set_output_channel(OUTPUT_CHANNEL_INFO, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-    mame_set_output_channel(OUTPUT_CHANNEL_DEBUG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-    mame_set_output_channel(OUTPUT_CHANNEL_VERBOSE, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
-    mame_set_output_channel(OUTPUT_CHANNEL_LOG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
+//    mame_set_output_channel(OUTPUT_CHANNEL_ERROR, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
+//    mame_set_output_channel(OUTPUT_CHANNEL_WARNING, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
+//    mame_set_output_channel(OUTPUT_CHANNEL_INFO, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
+//    mame_set_output_channel(OUTPUT_CHANNEL_DEBUG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
+//    mame_set_output_channel(OUTPUT_CHANNEL_VERBOSE, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
+//    mame_set_output_channel(OUTPUT_CHANNEL_LOG, output_delegate(FUNC(output_callback), (delegate_late_bind *)NULL));
 }
 
 - (id)init
@@ -108,8 +104,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
     _initializing = YES;
 
-    _renderEvent = osd_event_alloc(FALSE, FALSE);
-    _exitEvent   = osd_event_alloc(FALSE, FALSE);
+    _renderEvent = dispatch_semaphore_create(0);
+    _exitEvent   = dispatch_semaphore_create(0);
     
     // Sensible defaults
     _bufferSize = OEIntSizeMake(640, 480);
@@ -120,8 +116,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)dealloc
 {
-    osd_event_free(_renderEvent);
-    osd_event_free(_exitEvent);
+    _renderEvent = nil;
+    _exitEvent   = nil;
 
     if(_buffer)
     {
@@ -134,23 +130,16 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 {
     _machine = machine;
 
-    _machine->add_notifier(MACHINE_NOTIFY_EXIT, machine_notify_delegate(FUNC(mame_did_exit), machine));
     _machine->add_logerror_callback(error_callback);
-    _machine->save().register_postsave(save_prepost_delegate(FUNC(_OESaveStateCallback), machine));
-    _machine->save().register_postload(save_prepost_delegate(FUNC(_OESaveStateCallback), machine));
-
     _target = _machine->render().target_alloc();
 
-    _frameInterval = (NSTimeInterval) ATTOSECONDS_PER_SECOND / _machine->primary_screen->refresh_attoseconds();
+    _frameInterval = (NSTimeInterval) ATTOSECONDS_PER_SECOND / _machine->first_screen()->refresh_attoseconds();
     NSLog(@"Refresh rate set to %f Hz", _frameInterval);
     
     INT32 width = 0, height = 0;
     _target->compute_minimum_size(width, height);
     if(width > 0 && height > 0) _bufferSize = OEIntSizeMake(width, height);
     _target->set_bounds(_bufferSize.width, _bufferSize.height);
-
-    _uiTarget = _machine->render().target_alloc();
-    _target->manager().set_ui_target(*_uiTarget);
 
     // Add devices for 8 players
     for (int i = 0; i < 8; i++) {
@@ -179,13 +168,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     NSParameterAssert(_machine == machine);
 
     _machine->render().target_free(_target);
-    _machine->render().target_free(_uiTarget);
     _target = NULL;
-    _uiTarget = NULL;
 
     _machine = NULL;
 
-    osd_event_set(_exitEvent);
+    dispatch_semaphore_signal(_exitEvent);
 }
 
 #pragma mark - Execution
@@ -207,7 +194,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     // Easily broken by misnamed ROM archives
     _driverName = [[path lastPathComponent] stringByDeletingPathExtension];
 
-    astring err;
+    std::string err;
     emu_options options = emu_options();
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
 
@@ -226,9 +213,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
         }
         else
         {
-            astring *output = new astring();
+            std::string *output = new std::string();
             auditor.summarize(drivlist.driver().name, output);
-            NSLog(@"MAME: Audit failed with output:\n%s", output->cstr());
+            NSLog(@"MAME: Audit failed with output:\n%s", output->c_str());
             delete output;
         }
     }
@@ -247,7 +234,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     if(_machine != NULL) _machine->schedule_exit();
 
     // Wait for MAME to shut down correctly
-    osd_event_wait(_exitEvent, osd_ticks_per_second() * 10);
+    dispatch_semaphore_wait(_exitEvent, dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC));
 
     if(_texture)
     {
@@ -276,9 +263,9 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)mameEmuThread
 {
-    astring err;
+    std::string err;
 
-    emu_options options = emu_options();    
+    osd_options options = osd_options();
     options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SAMPLEPATH, 
                       [[[self supportDirectoryPath] stringByAppendingPathComponent:@"samples"] UTF8String], 
@@ -288,9 +275,6 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_NVRAM_DIRECTORY,
                       [[[self supportDirectoryPath] stringByAppendingPathComponent:@"nvram"]UTF8String],
-                      OPTION_PRIORITY_HIGH, err);
-    options.set_value(OPTION_MEMCARD_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"memcard"] UTF8String],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_INPUT_DIRECTORY,
                       [[[self supportDirectoryPath] stringByAppendingPathComponent:@"inp"] UTF8String],
@@ -305,17 +289,20 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SAMPLERATE, (int)[self audioSampleRate], OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SKIP_GAMEINFO, true, OPTION_PRIORITY_HIGH, err);
-#ifdef DEBUG
+#if 0
     options.set_value(OPTION_VERBOSE, true, OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_LOG, true, OPTION_PRIORITY_HIGH, err);
 #endif
 
-    osx_osd_interface interface = osx_osd_interface(self);
+    osx_osd_interface osd = osx_osd_interface(self, options);
+    osd.register_options();
 
     DLog(@"MAME: Starting game execution thread");
     
-    mame_execute(options, interface);
-
+    machine_manager *manager = machine_manager::instance(options, osd);
+    manager->execute();
+    global_free(manager);
+    
     DLog(@"MAME: Game execution thread exiting");
 }
 
@@ -357,7 +344,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)osd_update:(bool)skip_redraw
 {
-    osd_event_set(_renderEvent);
+    dispatch_semaphore_signal(_renderEvent);
 }
 
 - (void)executeFrame
@@ -365,8 +352,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     if(self.shouldSkipFrame || _target == NULL) return;
 
     // Only wait for 5 frames or so maximum
-    int status = osd_event_wait(_renderEvent, 5 * (osd_ticks_per_second() / self.frameInterval));
-    if(status == FALSE) return;
+    long status = dispatch_semaphore_wait(_renderEvent, 5 * NSEC_PER_SEC);
+    if(status < 0) return;
 
     if(!_texture)
     {
@@ -553,39 +540,40 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 #pragma mark - Save State
 
-static void *_OESaveStateBlock;
-
-static void _OESaveStateCallback(running_machine *machine)
-{
-    void (^block)(BOOL, NSError *) = (__bridge_transfer void(^)(BOOL, NSError *))_OESaveStateBlock;
-
-    block(YES, nil);
+- (void)waitForSaveOrLoad {
+    while (_machine->save_or_load_pending())
+    {
+        usleep(50 * 1000);
+    }
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-    _OESaveStateBlock = (__bridge_retained void *)[block copy];
-    
-    if(_machine != NULL && _machine->system().flags & GAME_SUPPORTS_SAVE)
-        _machine->schedule_save([fileName UTF8String]);
-    else
+    BOOL saved = NO;
+    if(_machine != NULL && _machine->system().flags & MACHINE_SUPPORTS_SAVE)
     {
-        NSLog(@"This game does not support save states!");
-        block(NO, nil);
+        _machine->schedule_save([fileName UTF8String]);
+        [self waitForSaveOrLoad];
+        saved = YES;
     }
+    
+    block(saved, nil);
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-    _OESaveStateBlock = (__bridge_retained void *)[block copy];
-
     // Wait until machine is initialized and ready to load a save state
     while(_initializing) usleep(100);
 
-    if(_machine != NULL && _machine->system().flags & GAME_SUPPORTS_SAVE)
+    BOOL loaded = NO;
+    if(_machine != NULL && _machine->system().flags & MACHINE_SUPPORTS_SAVE)
+    {
         _machine->schedule_load([fileName UTF8String]);
-    else
-        block(NO, nil);
+        [self waitForSaveOrLoad];
+        loaded = YES;
+    }
+
+    block(loaded, nil);
 }
 
 @end

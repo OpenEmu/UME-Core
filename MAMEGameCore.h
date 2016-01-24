@@ -27,6 +27,7 @@
 #import <Cocoa/Cocoa.h>
 #import <OpenEmuBase/OEGameCore.h>
 #import "OEArcadeSystemResponderClient.h"
+#import "osdcomm.h"
 
 class running_machine;
 

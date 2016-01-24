@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, OpenEmu Team
+ Copyright (c) 2013, 2016 OpenEmu Team
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -28,18 +28,32 @@
 
 #include "osx_osd_interface.h"
 
-osx_osd_interface::osx_osd_interface(MAMEGameCore *core) {
-    m_core = core;
+osx_osd_interface::osx_osd_interface(MAMEGameCore *core, osd_options &options)
+:osd_common_t(options), m_core(core)
+{
 }
 
-void osx_osd_interface::init(running_machine &machine) {
+void osx_osd_interface::init(running_machine &machine)
+{
+    osd_common_t::init(machine);
+    osd_common_t::init_subsystems();
     [m_core osd_init:&machine];
+    
 }
 
-void osx_osd_interface::update(bool skip_redraw) {
+void osx_osd_interface::update(bool skip_redraw)
+{
     [m_core osd_update:skip_redraw];
 }
 
-void osx_osd_interface::update_audio_stream(const INT16 *buffer, int samples_this_frame) {
+void osx_osd_interface::update_audio_stream(const INT16 *buffer, int samples_this_frame)
+{
     [m_core osd_update_audio_stream:buffer samples:samples_this_frame];
 }
+
+void osx_osd_interface::osd_exit()
+{
+    [m_core osd_exit:&machine()];
+}
+
+
