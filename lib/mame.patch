@@ -1,0 +1,17 @@
+diff --git a/src/emu/ui/ui.cpp b/src/emu/ui/ui.cpp
+index 39eeb6e..f9f5711 100644
+--- a/src/emu/ui/ui.cpp
++++ b/src/emu/ui/ui.cpp
+@@ -321,10 +321,10 @@ void ui_manager::display_startup_screens(bool first_time, bool show_disclaimer)
+ 	if (!first_time || (str > 0 && str < 60*5) || &machine().system() == &GAME_NAME(___empty) || (machine().debug_flags & DEBUG_FLAG_ENABLED) != 0)
+ 		show_gameinfo = show_warnings = show_disclaimer = show_mandatory_fileman = FALSE;
+ 
+-	#if defined(EMSCRIPTEN)
++	//#if defined(EMSCRIPTEN)
+ 	// also disable for the JavaScript port since the startup screens do not run asynchronously
+ 	show_gameinfo = show_warnings = show_disclaimer = FALSE;
+-	#endif
++	//#endif
+ 
+ 	// loop over states
+ 	set_handler(handler_ingame, 0);
