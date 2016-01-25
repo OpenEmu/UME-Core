@@ -17,9 +17,5 @@ DerivedData
 *.hmap
 
 # MAME
-*.inc
-*.fh
-*.lh
-*.bdc
-m68kops.*
-drivlist.c
+*.a
+*.o
