@@ -22,8 +22,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		051A8EE71C55CCCB00AB4D95 /* libmame_x64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 051A8EE61C55CCCB00AB4D95 /* libmame_x64.a */; };
+		051A8EE91C55CCD300AB4D95 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 051A8EE81C55CCD300AB4D95 /* makefile */; };
+		051A8EEB1C55CD1400AB4D95 /* minidir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 051A8EEA1C55CD1400AB4D95 /* minidir.cpp */; };
 		05334A961C52AEEF0066D493 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05334A951C52AEEF0066D493 /* CoreMIDI.framework */; };
-		05334A971C52AEFD0066D493 /* libmame_x64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05334A931C52AE4D0066D493 /* libmame_x64.a */; };
 		05334A991C52AF0E0066D493 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05334A981C52AF0E0066D493 /* CoreAudio.framework */; };
 		8C3132F8177F667D0002D0B9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3132F7177F667D0002D0B9 /* OpenGL.framework */; };
 		8CA9071017A83C08001591B7 /* osx_osd_interface.mm in Sources */ = {isa = PBXBuildFile; fileRef = D00DAE0B176E1E6900F58FBB /* osx_osd_interface.mm */; };
@@ -43,7 +45,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		05334A931C52AE4D0066D493 /* libmame_x64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmame_x64.a; sourceTree = "<group>"; };
+		051A8EE61C55CCCB00AB4D95 /* libmame_x64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmame_x64.a; sourceTree = "<group>"; };
+		051A8EE81C55CCD300AB4D95 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		051A8EEA1C55CD1400AB4D95 /* minidir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = minidir.cpp; path = osd/minidir.cpp; sourceTree = "<group>"; };
 		05334A951C52AEEF0066D493 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		05334A981C52AF0E0066D493 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		8C3132F7177F667D0002D0B9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -67,31 +71,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				051A8EE71C55CCCB00AB4D95 /* libmame_x64.a in Frameworks */,
 				05334A991C52AF0E0066D493 /* CoreAudio.framework in Frameworks */,
 				05334A961C52AEEF0066D493 /* CoreMIDI.framework in Frameworks */,
 				D00A068E1763763000C99008 /* Cocoa.framework in Frameworks */,
 				8C3132F8177F667D0002D0B9 /* OpenGL.framework in Frameworks */,
 				D0AADE31176382F900759E26 /* OpenEmuBase.framework in Frameworks */,
-				05334A971C52AEFD0066D493 /* libmame_x64.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		05334A921C52AE320066D493 /* mame */ = {
+		051A8EE51C55CC7900AB4D95 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				05334A931C52AE4D0066D493 /* libmame_x64.a */,
+				051A8EE81C55CCD300AB4D95 /* makefile */,
+				051A8EE61C55CCCB00AB4D95 /* libmame_x64.a */,
 			);
-			path = mame;
+			path = lib;
 			sourceTree = "<group>";
 		};
 		D00A06811763762F00C99008 = {
 			isa = PBXGroup;
 			children = (
 				D00A06A317637BDD00C99008 /* Classes */,
-				05334A921C52AE320066D493 /* mame */,
+				051A8EE51C55CC7900AB4D95 /* lib */,
 				D0AADE2E176381E900759E26 /* Other Sources */,
 				D00A06931763763000C99008 /* Resources */,
 				D00A068C1763763000C99008 /* Frameworks and Libraries */,
@@ -171,6 +176,7 @@
 			children = (
 				D00DAE0A176E1E6900F58FBB /* osx_osd_interface.h */,
 				D00DAE0B176E1E6900F58FBB /* osx_osd_interface.mm */,
+				051A8EEA1C55CD1400AB4D95 /* minidir.cpp */,
 			);
 			name = osd;
 			sourceTree = "<group>";
@@ -253,8 +259,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				051A8EEB1C55CD1400AB4D95 /* minidir.cpp in Sources */,
 				D00A06A617637E9100C99008 /* MAMEGameCore.mm in Sources */,
 				8CA9071017A83C08001591B7 /* osx_osd_interface.mm in Sources */,
+				051A8EE91C55CCD300AB4D95 /* makefile in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,10 +304,10 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/osd\"",
-					"\"$(SRCROOT)/mame/include/osd\"",
-					"\"$(SRCROOT)/mame/include/emu\"",
-					"\"$(SRCROOT)/mame/include/lib/util\"",
-					"\"$(SRCROOT)/mame/include/osd/modules/lib\"",
+					"\"$(SRCROOT)/mame/src/osd\"",
+					"\"$(SRCROOT)/mame/src/emu\"",
+					"\"$(SRCROOT)/mame/src/lib/util\"",
+					"\"$(SRCROOT)/mame/src/osd/modules/lib\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = (
@@ -356,10 +364,10 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/osd\"",
-					"\"$(SRCROOT)/mame/include/osd\"",
-					"\"$(SRCROOT)/mame/include/emu\"",
-					"\"$(SRCROOT)/mame/include/lib/util\"",
-					"\"$(SRCROOT)/mame/include/osd/modules/lib\"",
+					"\"$(SRCROOT)/mame/src/osd\"",
+					"\"$(SRCROOT)/mame/src/emu\"",
+					"\"$(SRCROOT)/mame/src/lib/util\"",
+					"\"$(SRCROOT)/mame/src/osd/modules/lib\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = (
@@ -415,7 +423,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/mame";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/lib";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -443,7 +451,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/mame";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/lib";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

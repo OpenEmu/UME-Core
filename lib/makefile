@@ -1,22 +1,15 @@
 # makefile to build libmame.a and copy any public header files
 
-TARGET := mame
+TARGET   := mame
+MAMEPATH := ../mame
+CONFIG   := Release
 
 ifndef SUBTARGET
 SUBTARGET := tiny
 endif
 
-CONFIG := Release
-ifdef DEBUG
-CONFIG := Debug
-endif
-
 ifndef ARCHITECTURE
 ARCHITECTURE := x64
-endif
-
-ifndef MAMEPATH
-$(error MAMEPATH must be defined)
 endif
 
 OUTPUT := libmame.a
@@ -63,4 +56,5 @@ libocore_osdmimi_x.a: $(LIBDIR)/libocore_osdmini.a
 	ar -x $?
 	rm minidir.o
 	ar -rcs libocore_osdmimi_x.a *.o
+	rm *.o "__.SYMDEF SORTED"
 	

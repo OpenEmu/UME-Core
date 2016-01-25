@@ -56,18 +56,4 @@ void osx_osd_interface::osd_exit()
     [m_core osd_exit:&machine()];
 }
 
-int osd_is_absolute_path(const char *path)
-{
-    int result;
-    
-    if (path[0] == '/')
-        result = TRUE;
-    else if (path[0] == '.')
-        result = TRUE;
-    else
-        result = FALSE;
-    
-    return result;
-}
-
 
