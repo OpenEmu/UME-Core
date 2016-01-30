@@ -1,3 +1,3 @@
 [submodule "mame"]
 	path = mame
-	url = git@github.com:mamedev/mame.git
+	url = git@github.com:stuartcarnie/mame.git
