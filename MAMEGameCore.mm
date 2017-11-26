@@ -511,7 +511,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     OERingBuffer *ringBuffer = [self ringBufferAtIndex:0];
     NSUInteger bytesPerSample = (self.audioBitDepth * self.channelCount) / 8;
     NSUInteger bytesToWrite = samples_this_frame * bytesPerSample;
-    NSUInteger bytesAvailableToWrite = ringBuffer.availableBytes;
+    NSUInteger bytesAvailableToWrite = ringBuffer.freeBytes;
     
     if(bytesToWrite > bytesAvailableToWrite)
     {
