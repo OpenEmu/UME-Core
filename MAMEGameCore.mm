@@ -223,6 +223,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
         {
             driver = drivlist.driver();
             verified = YES;
+
+            [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
         }
         else
         {
@@ -232,15 +234,16 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
             delete output;
         }
     }
-    
+
     return verified;
 }
 
-- (void)startEmulation
-{
-    [super startEmulation];
-    [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
-}
+// FIXME: Weird bug. This is not being called when restoring an autosave state on launch.
+//- (void)startEmulation
+//{
+//    [super startEmulation];
+//    [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
+//}
 
 - (void)stopEmulation
 {
@@ -358,6 +361,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 - (void)osd_update:(bool)skip_redraw
 {
     osd_event_set(_renderEvent);
+
+    if (!skip_redraw && !_machine->save_or_load_pending())
+    {
+        osd_event_set(_renderEvent);
+    }
 }
 
 - (void)executeFrame
@@ -515,7 +523,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     
     if(bytesToWrite > bytesAvailableToWrite)
     {
-        NSLog(@"MAME: Audio buffer overflow");
+        DLog(@"MAME: Audio buffer overflow");
         bytesToWrite = bytesAvailableToWrite;
     }
     
