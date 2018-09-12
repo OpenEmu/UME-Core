@@ -53,7 +53,7 @@
     GLuint _textureHeight;
     uint32_t *_buffer;
 
-    NSString *_romDir;
+    NSURL *_romDir;
     NSString *_driverName;
 
     NSTimeInterval _frameInterval;
@@ -65,7 +65,7 @@
 
 static void output_callback(delegate_late_bind *param, const char *format, va_list argptr)
 {
-    NSLog(@"MAME: %@", [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:argptr]);
+    NSLog(@"MAME: %@", [[NSString alloc] initWithFormat:@(format) arguments:argptr]);
 }
 
 static void error_callback(running_machine &machine, const char *string)
@@ -192,8 +192,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
-    _romDir = [path stringByDeletingLastPathComponent];
-    if(!_romDir) return NO;
+    _romDir = [NSURL fileURLWithPath:[path stringByDeletingLastPathComponent]];
 
     // Need a better way to identify the ROM driver from the archive path
 
@@ -209,7 +208,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
     astring err;
     emu_options options = emu_options();
-    options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_MEDIAPATH, _romDir.fileSystemRepresentation, OPTION_PRIORITY_HIGH, err);
 
     game_driver driver;
     driver_enumerator drivlist(options, [_driverName UTF8String]);
@@ -282,27 +281,27 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     astring err;
 
     emu_options options = emu_options();    
-    options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_MEDIAPATH, _romDir.fileSystemRepresentation, OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SAMPLEPATH, 
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"samples"] UTF8String], 
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"samples"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_CFG_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"cfg"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"cfg"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_NVRAM_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"nvram"]UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"nvram"]fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_MEMCARD_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"memcard"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"memcard"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_INPUT_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"inp"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"inp"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_DIFF_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"diff"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"diff"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_COMMENT_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"comments"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"comments"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
 
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
@@ -575,7 +574,7 @@ static void _OESaveStateCallback(running_machine *machine)
     _OESaveStateBlock = (__bridge_retained void *)[block copy];
     
     if(_machine != NULL && _machine->system().flags & GAME_SUPPORTS_SAVE)
-        _machine->schedule_save([fileName UTF8String]);
+        _machine->schedule_save(fileName.fileSystemRepresentation);
     else
     {
         NSLog(@"This game does not support save states!");
@@ -591,7 +590,7 @@ static void _OESaveStateCallback(running_machine *machine)
     while(_initializing) usleep(100);
 
     if(_machine != NULL && _machine->system().flags & GAME_SUPPORTS_SAVE)
-        _machine->schedule_load([fileName UTF8String]);
+        _machine->schedule_load(fileName.fileSystemRepresentation);
     else
         block(NO, nil);
 }
