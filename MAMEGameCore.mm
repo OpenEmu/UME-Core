@@ -240,6 +240,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
             NSUInteger numberOfMatches = [regex numberOfMatchesInString:auditOutput options:0 range:NSMakeRange(0, auditOutput.length)];
             DLog(@"regex matches: %lu", numberOfMatches);
 
+            NSString *gameDriverName = @(drivlist.driver().name);
+
             [regex enumerateMatchesInString:auditOutput options:0 range:NSMakeRange(0, auditOutput.length) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
                 if (result == nil) return;
 
@@ -261,11 +263,11 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
                     [fileName appendString:@".chd"];
 
                 }
-                // Assumed ROM loaded itself is missing files
+                // Assumed driver/clone ROM loaded is missing files
                 else
                 {
-                    NSString *match = [auditOutput substringWithRange:secondGroup];
-                    fileName = [NSMutableString stringWithString:match];
+                    //NSString *match = [auditOutput substringWithRange:secondGroup];
+                    fileName = [NSMutableString stringWithFormat:@"%@.zip", gameDriverName];
                 }
 
                 [missingFilesSet addObject:fileName];
@@ -284,7 +286,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
                 if([missingFileURL checkResourceIsReachableAndReturnError:nil])
                 {
-                    [missingFilesList appendString:[NSString stringWithFormat:@"%@  \t- MISSING FILES\n", missingFile]];
+                    [missingFilesList appendString:[NSString stringWithFormat:@"%@  \t- INCORRECT SET\n", missingFile]];
                 }
                 else
                 {
