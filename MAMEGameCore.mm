@@ -210,6 +210,8 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
         {
             driver = drivlist.driver();
             verified = YES;
+
+            [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
         }
         else
         {
@@ -221,15 +223,16 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
             *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:-1 userInfo:userInfo];
         }
     }
-    
+
     return verified;
 }
 
-- (void)startEmulation
-{
-    [super startEmulation];
-    [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
-}
+// FIXME: Weird bug. This is not being called when restoring an autosave state on launch.
+//- (void)startEmulation
+//{
+//    [super startEmulation];
+//    [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
+//}
 
 - (void)stopEmulation
 {
