@@ -216,10 +216,81 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
         {
             std::string *output = new std::string();
             auditor.summarize(drivlist.driver().name, output);
-            NSString *message = [NSString stringWithCString:output->c_str() encoding:NSASCIIStringEncoding];
+            NSString *auditOutput = @(output->c_str());
+            NSLog(@"MAME: Audit failed with output:\n%@", auditOutput);
             delete output;
-            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey: message };
-            *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:-1 userInfo:userInfo];
+
+            // Parse MAME's audit report and build a list of missing/incomplete required files
+            NSMutableOrderedSet *missingFilesSet = [NSMutableOrderedSet new];
+
+            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(?<=NOT FOUND \\()(.*?)(?=\\)\n)|(?<=: )([^\\s]+)(.*?)(?= - NOT FOUND\n)" options:NSRegularExpressionCaseInsensitive error:nil];
+            NSUInteger numberOfMatches = [regex numberOfMatchesInString:auditOutput options:0 range:NSMakeRange(0, auditOutput.length)];
+            DLog(@"regex matches: %lu", numberOfMatches);
+
+            NSString *gameDriverName = @(drivlist.driver().name);
+
+            [regex enumerateMatchesInString:auditOutput options:0 range:NSMakeRange(0, auditOutput.length) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+                if (result == nil) return;
+
+                NSRange range = result.range;
+                NSRange secondGroup = [result rangeAtIndex:2];
+                NSRange thirdGroup  = [result rangeAtIndex:3];
+
+                NSString *match = [auditOutput substringWithRange:range];
+                NSMutableString *fileName = [NSMutableString stringWithString:match];
+
+                // Assumed missing/incomplete parent, device or BIOS ROM
+                if(secondGroup.location == NSNotFound && thirdGroup.location == NSNotFound)
+                {
+                    [fileName appendString:@".zip"];
+                }
+                // Assumed missing CHD
+                else if(secondGroup.location != NSNotFound && [auditOutput substringWithRange:thirdGroup].length == 0)
+                {
+                    [fileName appendString:@".chd"];
+
+                }
+                // Assumed driver/clone ROM loaded is missing files
+                else
+                {
+                    //NSString *match = [auditOutput substringWithRange:secondGroup];
+                    fileName = [NSMutableString stringWithFormat:@"%@.zip", gameDriverName];
+                }
+
+                [missingFilesSet addObject:fileName];
+            }];
+
+            // Sort missing files by ascending order
+            NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"self"
+                                                                             ascending:YES];
+            [missingFilesSet sortUsingDescriptors:@[sortDescriptor]];
+
+            // Determine if ROMs exist with missing files, or are not found
+            NSMutableString *missingFilesList = [NSMutableString string];
+            for(NSString *missingFile in missingFilesSet)
+            {
+                NSURL *missingFileURL = [_romDir URLByAppendingPathComponent:missingFile];
+
+                if([missingFileURL checkResourceIsReachableAndReturnError:nil])
+                {
+                    [missingFilesList appendString:[NSString stringWithFormat:@"%@  \t- INCORRECT SET\n", missingFile]];
+                }
+                else
+                {
+                    [missingFilesList appendString:[NSString stringWithFormat:@"%@  \t- NOT FOUND\n", missingFile]];
+                }
+            }
+
+            // Give an audit report to the user
+            NSString *game = [NSString stringWithFormat:@"%@ (%@.zip)", @(drivlist.driver().description), @(drivlist.driver().name)];
+            NSString *versionRequired = [[[[[self owner] bundle] infoDictionary] objectForKey:@"CFBundleVersion"] substringToIndex:5];
+
+            NSError *outErr = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:@{
+                NSLocalizedDescriptionKey : @"Required files are missing.",
+                NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"%@ requires:\n\n%@\nThese ROMs must be from a MAME %@ ROM set. Some of these files can be parent/device/BIOS ROMs, which are not part of the game, but are still required. Delete files already imported and reimport with correct files.", game, missingFilesList, versionRequired],
+                }];
+
+            *error = outErr;
         }
     }
 
