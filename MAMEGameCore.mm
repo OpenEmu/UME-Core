@@ -52,7 +52,7 @@
     GLuint _textureHeight;
     uint32_t *_buffer;
 
-    NSString *_romDir;
+    NSURL *_romDir;
     NSString *_driverName;
     NSString *_stateDir;
     NSString *_stateFile;
@@ -128,7 +128,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
                                   error:nil];
 
     std::string err;
-    _machine->options().set_value(OPTION_STATE_DIRECTORY, [_stateDir UTF8String], OPTION_PRIORITY_HIGH, err);
+    _machine->options().set_value(OPTION_STATE_DIRECTORY, _stateDir.fileSystemRepresentation, OPTION_PRIORITY_HIGH, err);
 
     _machine->add_logerror_callback(error_callback);
     _target = _machine->render().target_alloc();
@@ -179,8 +179,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
-    _romDir = [path stringByDeletingLastPathComponent];
-    if(!_romDir) return NO;
+    _romDir = [NSURL fileURLWithPath:[path stringByDeletingLastPathComponent]];
     
     // Need a better way to identify the ROM driver from the archive path
 
@@ -196,7 +195,7 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
 
     std::string err;
     emu_options options = emu_options();
-    options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_MEDIAPATH, _romDir.fileSystemRepresentation, OPTION_PRIORITY_HIGH, err);
 
     game_driver driver;
     driver_enumerator drivlist(options, [_driverName UTF8String]);
@@ -271,24 +270,24 @@ static INT32 joystick_get_state(void *device_internal, void *item_internal)
     std::string err;
 
     osd_options options = osd_options();
-    options.set_value(OPTION_MEDIAPATH, [_romDir UTF8String], OPTION_PRIORITY_HIGH, err);
+    options.set_value(OPTION_MEDIAPATH, _romDir.fileSystemRepresentation, OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_SAMPLEPATH, 
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"samples"] UTF8String], 
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"samples"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_CFG_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"cfg"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"cfg"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_NVRAM_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"nvram"]UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"nvram"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_INPUT_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"inp"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"inp"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_DIFF_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"diff"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"diff"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
     options.set_value(OPTION_COMMENT_DIRECTORY,
-                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"comments"] UTF8String],
+                      [[[self supportDirectoryPath] stringByAppendingPathComponent:@"comments"] fileSystemRepresentation],
                       OPTION_PRIORITY_HIGH, err);
 
     options.set_value(OPTION_SYSTEMNAME, [_driverName UTF8String], OPTION_PRIORITY_HIGH, err);
