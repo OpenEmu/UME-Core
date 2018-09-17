@@ -18,7 +18,7 @@ You must build the `libmame_x64.a` static library before building the MAME Game 
 The following commands will build all the MAME object files. Ignore the final link error, which is only to build the executable – we don't use the midi support.
 
     cd mame
-    make -j 4 macosx_x64_clang SUBTARGET=arcade NOWERROR=1
+    make -j 4 macosx_x64_clang SUBTARGET=arcade NOWERROR=1 OSD=osdmini
 
 **Step 3: Build libmame_x64.a**
 
