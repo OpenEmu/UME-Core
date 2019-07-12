@@ -36,5 +36,19 @@
 	<string>1</string>
 	<key>SUFeedURL</key>
 	<string>https://raw.github.com/OpenEmu/OpenEmu-Update/master/mame_appcast.xml</string>
+	<key>OEGameCoreOptions</key>
+	<dict>
+		<key>openemu.system.arcade</key>
+		<dict>
+			<key>OEGameCoreRewindBufferSeconds</key>
+			<integer>60</integer>
+			<key>OEGameCoreRewindInterval</key>
+			<integer>0</integer>
+			<key>OEGameCoreSupportsDisplayModeChange</key>
+			<true/>
+			<key>OEGameCoreSupportsRewinding</key>
+			<true/>
+		</dict>
+	</dict>
 </dict>
 </plist>

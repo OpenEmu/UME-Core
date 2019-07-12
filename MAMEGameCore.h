@@ -27,16 +27,9 @@
 #import <Cocoa/Cocoa.h>
 #import <OpenEmuBase/OEGameCore.h>
 #import "OEArcadeSystemResponderClient.h"
-#import "osdcomm.h"
-
-class running_machine;
+#import "osd.h"
 
 OE_EXPORTED_CLASS
-@interface MAMEGameCore : OEGameCore
-
-- (void)osd_init:(running_machine *)machine;
-- (void)osd_exit:(running_machine *)machine;
-- (void)osd_update:(bool)skip_redraw;
-- (void)osd_update_audio_stream:(const INT16 *)buffer samples:(int)samples_this_frame;
+@interface MAMEGameCore : OEGameCore<OSDDelegate>
 
 @end
