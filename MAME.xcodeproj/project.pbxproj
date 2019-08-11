@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -22,10 +22,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		051A8EE91C55CCD300AB4D95 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 051A8EE81C55CCD300AB4D95 /* makefile */; };
-		05334A961C52AEEF0066D493 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05334A951C52AEEF0066D493 /* CoreMIDI.framework */; };
-		05334A991C52AF0E0066D493 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05334A981C52AF0E0066D493 /* CoreAudio.framework */; };
-		8C3132F8177F667D0002D0B9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3132F7177F667D0002D0B9 /* OpenGL.framework */; };
+		0510AA1E2300825E002028C1 /* mamearcade_headless.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0510AA1D2300825D002028C1 /* mamearcade_headless.dylib */; };
+		0510AA1F23008294002028C1 /* mamearcade_headless.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 0510AA1D2300825D002028C1 /* mamearcade_headless.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D00A068E1763763000C99008 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D00A068D1763763000C99008 /* Cocoa.framework */; };
 		D00A06A617637E9100C99008 /* MAMEGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A06A517637E9100C99008 /* MAMEGameCore.m */; };
 		D0AADE31176382F900759E26 /* OpenEmuBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0AADE30176382F900759E26 /* OpenEmuBase.framework */; };
@@ -41,12 +39,26 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		0510AA2023008294002028C1 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0510AA1F23008294002028C1 /* mamearcade_headless.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		051A8EE81C55CCD300AB4D95 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		0510AA1B230081F3002028C1 /* inputenum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inputenum.h; path = deps/mame/src/osd/headless/public/inputenum.h; sourceTree = "<group>"; };
+		0510AA1C230081F3002028C1 /* osd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = osd.h; path = deps/mame/src/osd/headless/public/osd.h; sourceTree = "<group>"; };
+		0510AA1D2300825D002028C1 /* mamearcade_headless.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mamearcade_headless.dylib; path = deps/mame/mamearcade_headless.dylib; sourceTree = "<group>"; };
 		05334A951C52AEEF0066D493 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		05334A981C52AF0E0066D493 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
-		059F50DA22D5895300A28989 /* osd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osd.h; sourceTree = "<group>"; };
-		059F50DB22D5895300A28989 /* inputenum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inputenum.h; sourceTree = "<group>"; };
 		8C3132F7177F667D0002D0B9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		D00A068A1763763000C99008 /* MAME.oecoreplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MAME.oecoreplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00A068D1763763000C99008 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -66,10 +78,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05334A991C52AF0E0066D493 /* CoreAudio.framework in Frameworks */,
-				05334A961C52AEEF0066D493 /* CoreMIDI.framework in Frameworks */,
+				0510AA1E2300825E002028C1 /* mamearcade_headless.dylib in Frameworks */,
 				D00A068E1763763000C99008 /* Cocoa.framework in Frameworks */,
-				8C3132F8177F667D0002D0B9 /* OpenGL.framework in Frameworks */,
 				D0AADE31176382F900759E26 /* OpenEmuBase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,19 +87,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		051A8EE51C55CC7900AB4D95 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				051A8EE81C55CCD300AB4D95 /* makefile */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
 		D00A06811763762F00C99008 = {
 			isa = PBXGroup;
 			children = (
 				D00A06A317637BDD00C99008 /* Classes */,
-				051A8EE51C55CC7900AB4D95 /* lib */,
 				D0AADE2E176381E900759E26 /* Other Sources */,
 				D00A06931763763000C99008 /* Resources */,
 				D00A068C1763763000C99008 /* Frameworks and Libraries */,
@@ -108,6 +109,7 @@
 		D00A068C1763763000C99008 /* Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				0510AA1D2300825D002028C1 /* mamearcade_headless.dylib */,
 				D0AADE30176382F900759E26 /* OpenEmuBase.framework */,
 				D00A068F1763763000C99008 /* Linked Frameworks */,
 				D0AADE321763833600759E26 /* Other Frameworks */,
@@ -167,8 +169,8 @@
 		D0BA5A9517645D630033A910 /* osd */ = {
 			isa = PBXGroup;
 			children = (
-				059F50DB22D5895300A28989 /* inputenum.h */,
-				059F50DA22D5895300A28989 /* osd.h */,
+				0510AA1B230081F3002028C1 /* inputenum.h */,
+				0510AA1C230081F3002028C1 /* osd.h */,
 			);
 			name = osd;
 			sourceTree = "<group>";
@@ -183,6 +185,8 @@
 				D00A06861763763000C99008 /* Sources */,
 				D00A06871763763000C99008 /* Frameworks */,
 				D00A06881763763000C99008 /* Resources */,
+				0510AA2023008294002028C1 /* Embed Libraries */,
+				0510AA2123008883002028C1 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -203,7 +207,7 @@
 				ORGANIZATIONNAME = OpenEmu;
 			};
 			buildConfigurationList = D00A06851763762F00C99008 /* Build configuration list for PBXProject "MAME" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -232,6 +236,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0510AA2123008883002028C1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "install_name_tool -change mamearcade_headless.dylib @rpath/mamearcade_headless.dylib ${TARGET_BUILD_DIR}/${EXECUTABLE_PATH}\n";
+		};
 		D0AADE2D1763815000759E26 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -253,7 +274,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D00A06A617637E9100C99008 /* MAMEGameCore.m in Sources */,
-				051A8EE91C55CCD300AB4D95 /* makefile in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,12 +338,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
-				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
@@ -373,11 +391,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
-				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};
@@ -391,9 +407,15 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../OpenEmu/Arcade\"",
+					"$(SRCROOT)/deps/mame/src/osd/headless/public",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/mame",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -411,9 +433,15 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../OpenEmu/Arcade\"",
+					"$(SRCROOT)/deps/mame/src/osd/headless/public",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/mame",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

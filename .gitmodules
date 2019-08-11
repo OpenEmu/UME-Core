@@ -1,0 +1,4 @@
+[submodule "deps/mame"]
+	path = deps/mame
+	url = https://github.com/stuartcarnie/mame.git
+	branch = mame0209-headless

@@ -40,7 +40,6 @@
     OEIntRect _screenRect;
     OEIntSize _aspectSize;
     
-    NSURL *_romDir;
     NSString *_stateDir;
     NSString *_stateFile;
     NSFileManager *_fileManager;
@@ -74,9 +73,9 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     }
 
     // Sensible defaults
-    _bufferSize = OEIntSizeMake(640, 480);
+    _bufferSize    = OEIntSizeMake(640, 480);
     _frameInterval = 60;
-    _fileManager = [NSFileManager new];
+    _fileManager   = [NSFileManager new];
     
 #if 1
 #define LIB "/Volumes/Data/projects/mame/cmake-build-headless-dbg/build/projects/headless/mametiny/cmake/mametiny/libmametiny_headless.dylib"
@@ -84,24 +83,25 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 #define LIB "/Volumes/Data/projects/mame/mamearcade_headless.dylib"
 #endif
     
-    _handle = dlopen(LIB, RTLD_LAZY);
-    if (_handle == nil)
-    {
-        
-        printf("no library: %s\n", dlerror());
-        return nil;
-    }
+//    _handle = dlopen(LIB, RTLD_LAZY);
+//    if (_handle == nil)
+//    {
+//        NSLog(@"No library: %s", dlerror());
+//        return nil;
+//    }
     
-    Class OSD_class = NSClassFromString(@"OSD");
-    if (!OSD_class)
-    {
-        printf("unable to load OSD class\n");
-        return nil;
-    }
+//    Class OSD_class = NSClassFromString(@"OSD");
+//    if (!OSD_class)
+//    {
+//        NSLog(@"unable to load OSD class");
+//        return nil;
+//    }
     
-    _osd = [OSD_class shared];
+    
+    
+    _osd = [OSD shared];
     _osd.delegate = self;
-    _osd.verboseOutput = YES;
+    _osd.verboseOutput = YES; // TODO: debug only; remove later
     _screenRect = { {0,0}, {640, 480} };
     _aspectSize = { 4, 3 };
 
@@ -130,7 +130,7 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
         [dev addItemNamed:@"X Axis" id:InputItemID_XAXIS getter:joystick_get_state context:&_axes[i][0]];
         [dev addItemNamed:@"Y Axis" id:InputItemID_YAXIS getter:joystick_get_state context:&_axes[i][1]];
         [dev addItemNamed:@"Start" id:InputItemID_START getter:joystick_get_state context:&_buttons[i][OEArcadeButtonP1Start]];
-        [dev addItemNamed:@"Select" id:InputItemID_SELECT getter:joystick_get_state context:&_buttons[i][OEArcadeButtonInsertCoin]];
+        [dev addItemNamed:@"Insert Coin" id:InputItemID_SELECT getter:joystick_get_state context:&_buttons[i][OEArcadeButtonInsertCoin]];
         [dev addItemNamed:@"Button 1" id:InputItemID_BUTTON1 getter:joystick_get_state context:&_buttons[i][OEArcadeButton1]];
         [dev addItemNamed:@"Button 2" id:InputItemID_BUTTON2 getter:joystick_get_state context:&_buttons[i][OEArcadeButton2]];
         [dev addItemNamed:@"Button 3" id:InputItemID_BUTTON3 getter:joystick_get_state context:&_buttons[i][OEArcadeButton3]];
@@ -154,17 +154,11 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
-    _romDir = [NSURL fileURLWithPath:[path stringByDeletingLastPathComponent]];
-    _osd.romsPath = [path stringByDeletingLastPathComponent];
-    return [_osd loadGame:[[path lastPathComponent] stringByDeletingPathExtension]];
+    [_osd setBasePath:[[path stringByDeletingLastPathComponent] stringByDeletingLastPathComponent]];
+    NSString *rom = [[path lastPathComponent] stringByDeletingPathExtension];
+    BOOL res = [_osd loadGame:rom error:error];
+    return [_osd loadGame:rom];
 }
-
-// FIXME: Weird bug. This is not being called when restoring an autosave state on launch.
-//- (void)startEmulation
-//{
-//    [super startEmulation];
-//    [NSThread detachNewThreadSelector:@selector(mameEmuThread) toTarget:self withObject:nil];
-//}
 
 - (void)resetEmulation
 {
@@ -175,7 +169,6 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 
 - (const void *)getVideoBufferWithHint:(void *)hint
 {
-    
     _buffer = (uint32_t *)hint;
     [_osd setBuffer:hint size:NSSizeFromOEIntSize(_bufferSize)];
     return _buffer;
@@ -259,14 +252,28 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-    // TODO: implement state save
-    [super saveStateToFileAtPath:fileName completionHandler:block];
+    BOOL res     = NO;
+    NSError *err = nil;
+    
+    if (_osd.supportsSave)
+    {
+        res = [_osd saveStateFromFileAtPath:fileName error:&err];
+    }
+    
+    block(res, err);
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-    // TODO: implement state load
-    [super loadStateFromFileAtPath:fileName completionHandler:block];
+    BOOL res     = NO;
+    NSError *err = nil;
+    
+    if (_osd.supportsSave)
+    {
+        res = [_osd loadStateFromFileAtPath:fileName error:&err];
+    }
+    
+    block(res, err);
 }
 
 - (BOOL)supportsRewinding
@@ -281,7 +288,6 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 
 - (BOOL)deserializeState:(NSData *)state withError:(NSError *__autoreleasing *)outError
 {
-    NSLog(@"rewind frame");
     return [_osd deserializeState:state];
 }
 

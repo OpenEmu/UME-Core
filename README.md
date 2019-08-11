@@ -6,22 +6,13 @@ OpenEmu Core plugin for UME
 Building
 --------
 
-You must build the `libmame_x64.a` static library before building the MAME Game core, outlined in the following steps.
+You must build the `mamearcade_headless.dylib` dynamic library before building the MAME Game core:
 
-**Step 1: Apply patch**
+```sh
+$ cd deps/mame
+$ make macosx_x64_clang OSD="headless" verbose=1 TARGETOS="macosx" CONFIG="headless-rel" TARGET=mame SUBTARGET=arcade -j8
+```
 
-    cd mame
-    git apply ../lib/mame.patch
+Depending on your hardware, this could take a _long_ time, but if successful, you will have a file named `mamearcade_headless.dylib` in the current directory.
 
-**Step 2: Build mame**
-
-The following commands will build all the MAME object files. Ignore the final link error, which is only to build the executable – we don't use the midi support.
-
-    cd mame
-    make -j 4 macosx_x64_clang SUBTARGET=arcade NOWERROR=1 OSD=osdmini
-
-**Step 3: Build libmame_x64.a**
-
-    cd ../lib
-    make SUBTARGET=arcade
-
+Build the UME project, which will link and embed this binary and update the loader path automatically.
