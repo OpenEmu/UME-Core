@@ -16,3 +16,4 @@ $ make macosx_x64_clang OSD="headless" verbose=1 TARGETOS="macosx" CONFIG="headl
 Depending on your hardware, this could take a _long_ time, but if successful, you will have a file named `mamearcade_headless.dylib` in the current directory.
 
 Build the UME project, which will link and embed this binary and update the loader path automatically.
+

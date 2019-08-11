@@ -119,7 +119,11 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 {
     _screenRect = {{0, 0}, OEIntSizeMake(bounds.width, bounds.height)};
     _aspectSize = OEIntSizeMake(aspect.width, aspect.height);
-    
+    if (_buffer != nil)
+    {
+        [_osd setBuffer:_buffer size:NSSizeFromOEIntSize(_bufferSize)];
+    }
+
     _frameInterval = fps;
     
     // initialize joysticks
@@ -162,7 +166,7 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)resetEmulation
 {
-    [_osd scheduleSoftReset];
+    [_osd scheduleHardReset];
 }
 
 #pragma mark - Video
