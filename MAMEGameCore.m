@@ -146,6 +146,7 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     // Special keys
     InputDevice *kb = [_osd.keyboard addDeviceNamed:@"OpenEmu Keys"];
     [kb addItemNamed:@"Service" id:InputItemID_F2 getter:joystick_get_state context:&_buttons[0][OEArcadeButtonService]];
+    [kb addItemNamed:@"UI Configure" id:InputItemID_TAB getter:joystick_get_state context:&_buttons[0][OEArcadeUIConfigure]];
 }
 
 - (void)updateAudioBuffer:(const int16_t *)buffer samples:(NSInteger)samples
@@ -154,14 +155,18 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     [buf write:buffer maxLength:samples * 2 * sizeof(int16_t)];
 }
 
+- (void)logLevel:(OSDLogLevel)level format:(NSString *)fmt args:(va_list)args
+{
+    NSLogv(fmt, args);
+}
+
 #pragma mark - Execution
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     [_osd setBasePath:[[path stringByDeletingLastPathComponent] stringByDeletingLastPathComponent]];
     NSString *rom = [[path lastPathComponent] stringByDeletingPathExtension];
-    BOOL res = [_osd loadGame:rom error:error];
-    return [_osd loadGame:rom];
+    return [_osd loadGame:rom error:error];
 }
 
 - (void)resetEmulation
