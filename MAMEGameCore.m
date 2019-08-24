@@ -40,10 +40,6 @@
     OEIntRect _screenRect;
     OEIntSize _aspectSize;
     
-    NSString *_stateDir;
-    NSString *_stateFile;
-    NSFileManager *_fileManager;
-
     NSTimeInterval _frameInterval;
     
 
@@ -75,7 +71,6 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     // Sensible defaults
     _bufferSize    = OEIntSizeMake(640, 480);
     _frameInterval = 60;
-    _fileManager   = [NSFileManager new];
     
 #if 1
 #define LIB "/Volumes/Data/projects/mame/cmake-build-headless-dbg/build/projects/headless/mametiny/cmake/mametiny/libmametiny_headless.dylib"
