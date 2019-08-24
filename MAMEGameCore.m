@@ -124,7 +124,7 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     // initialize joysticks
     
     for (int i = 0; i < 8; i++) {
-        NSString *name = [NSString stringWithFormat:@"OpenEmu Device %d", i];
+        NSString *name = [NSString stringWithFormat:@"OpenEmu Player %d", i];
         InputDevice *dev = [_osd.joystick addDeviceNamed:name];
         [dev addItemNamed:@"X Axis" id:InputItemID_XAXIS getter:joystick_get_state context:&_axes[i][0]];
         [dev addItemNamed:@"Y Axis" id:InputItemID_YAXIS getter:joystick_get_state context:&_axes[i][1]];
@@ -139,7 +139,7 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     }
     
     // Special keys
-    InputDevice *kb = [_osd.keyboard addDeviceNamed:@"OpenEmu Keys"];
+    InputDevice *kb = [_osd.keyboard addDeviceNamed:@"OpenEmu Keyboard"];
     [kb addItemNamed:@"Service" id:InputItemID_F2 getter:joystick_get_state context:&_buttons[0][OEArcadeButtonService]];
     [kb addItemNamed:@"UI Configure" id:InputItemID_TAB getter:joystick_get_state context:&_buttons[0][OEArcadeUIConfigure]];
 }
