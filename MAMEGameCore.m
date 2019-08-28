@@ -69,7 +69,7 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     }
 
     // Sensible defaults
-    _bufferSize    = OEIntSizeMake(640, 480);
+    _bufferSize    = OEIntSizeMake(1024, 1024);
     _frameInterval = 60;
     
 #if 1
@@ -97,7 +97,7 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     _osd = [OSD shared];
     _osd.delegate = self;
     _osd.verboseOutput = YES; // TODO: debug only; remove later
-    _screenRect = { {0,0}, {640, 480} };
+    _screenRect = { {0,0}, {1024, 1024} };
     _aspectSize = { 4, 3 };
 
     return self;
