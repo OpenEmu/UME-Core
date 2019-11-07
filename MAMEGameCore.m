@@ -150,9 +150,9 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     [buf write:buffer maxLength:samples * 2 * sizeof(int16_t)];
 }
 
-- (void)logLevel:(OSDLogLevel)level format:(NSString *)fmt args:(va_list)args
+- (void)logLevel:(OSDLogLevel)level message:(NSString *)msg
 {
-    NSLogv(fmt, args);
+    NSLog(@"%@", msg);
 }
 
 #pragma mark - Execution
