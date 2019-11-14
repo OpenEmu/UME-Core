@@ -391,6 +391,12 @@ static os_log_t OE_CORE_LOG, OE_CORE_AUDIT_LOG;
     {
         res = [_osd saveStateFromFileAtPath:fileName error:&err];
     }
+    else
+    {
+        err = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError userInfo:@{
+            NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Game \"%@\" does not not support save states.", _osd.driverFullName],
+        }];
+    }
     
     block(res, err);
 }
@@ -403,6 +409,12 @@ static os_log_t OE_CORE_LOG, OE_CORE_AUDIT_LOG;
     if (_osd.supportsSave)
     {
         res = [_osd loadStateFromFileAtPath:fileName error:&err];
+    }
+    else
+    {
+        err = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError userInfo:@{
+            NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Game \"%@\" does not not support save states.", _osd.driverFullName],
+        }];
     }
     
     block(res, err);
