@@ -41,7 +41,7 @@
 		<key>openemu.system.arcade</key>
 		<dict>
 			<key>OEGameCoreRewindBufferSeconds</key>
-			<integer>60</integer>
+			<integer>10</integer>
 			<key>OEGameCoreRewindInterval</key>
 			<integer>0</integer>
 			<key>OEGameCoreSupportsDisplayModeChange</key>

@@ -28,7 +28,23 @@
 
 #import <OpenEmuBase/OERingBuffer.h>
 #import <OpenGL/gl.h>
-#import <dlfcn.h>
+#import <os/log.h>
+
+@interface MAMEAuditResult: NSObject
+
+/*! Returns the unique identifier of this result
+ *
+ * @remarks
+ *
+ * Identifier which groups resources by their driver, parent or CHD name
+ */
+@property (nonatomic, readonly) NSString *identifier;
+@property (nonatomic, readonly) NSString *fileName;
+
+- (instancetype)initWithDriver:(NSString *)driver auditRecord:(AuditRecord *)record;
+- (BOOL)checkSetExistsInDir:(NSURL *)dir;
+
+@end
 
 @interface MAMEGameCore () <OEArcadeSystemResponderClient>
 {
@@ -46,7 +62,7 @@
     // dylib
     void *_handle;
     OSD *_osd;
-    
+    BOOL _supportsRewinding;
 }
 
 @end
@@ -56,9 +72,17 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     return *(uint32_t *)item_internal;
 }
 
+static os_log_t OE_CORE_LOG, OE_CORE_AUDIT_LOG;
+
 @implementation MAMEGameCore
 
 #pragma mark - Lifecycle
+
++ (void)initialize
+{
+    OE_CORE_LOG         = os_log_create("org.openemu.MAME", "");
+    OE_CORE_AUDIT_LOG   = os_log_create("org.openemu.MAME", "audit");
+}
 
 - (id)init
 {
@@ -71,58 +95,20 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     // Sensible defaults
     _bufferSize    = OEIntSizeMake(1024, 1024);
     _frameInterval = 60;
-    
-#if 1
-#define LIB "/Volumes/Data/projects/mame/cmake-build-headless-dbg/build/projects/headless/mametiny/cmake/mametiny/libmametiny_headless.dylib"
-#else
-#define LIB "/Volumes/Data/projects/mame/mamearcade_headless.dylib"
-#endif
-    
-//    _handle = dlopen(LIB, RTLD_LAZY);
-//    if (_handle == nil)
-//    {
-//        NSLog(@"No library: %s", dlerror());
-//        return nil;
-//    }
-    
-//    Class OSD_class = NSClassFromString(@"OSD");
-//    if (!OSD_class)
-//    {
-//        NSLog(@"unable to load OSD class");
-//        return nil;
-//    }
-    
-    
-    
+    _screenRect = { {0,0}, _bufferSize };
+    _aspectSize = { 4, 3 };
+
     _osd = [OSD shared];
     _osd.delegate = self;
-    _osd.verboseOutput = YES; // TODO: debug only; remove later
-    _screenRect = { {0,0}, {1024, 1024} };
-    _aspectSize = { 4, 3 };
 
     return self;
 }
 
-- (void)dealloc
-{
-    dlclose(_handle);
-}
-
 #pragma mark - OSDDelegate
 
-- (void)willInitializeWithBounds:(NSSize)bounds fps:(float)fps aspect:(NSSize)aspect
+- (void)didInitialize
 {
-    _screenRect = {{0, 0}, OEIntSizeMake(bounds.width, bounds.height)};
-    _aspectSize = OEIntSizeMake(aspect.width, aspect.height);
-    if (_buffer != nil)
-    {
-        [_osd setBuffer:_buffer size:NSSizeFromOEIntSize(_bufferSize)];
-    }
-
-    _frameInterval = fps;
-    
     // initialize joysticks
-    
     for (int i = 0; i < 8; i++) {
         NSString *name = [NSString stringWithFormat:@"OpenEmu Player %d", i];
         InputDevice *dev = [_osd.joystick addDeviceNamed:name];
@@ -144,6 +130,25 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
     [kb addItemNamed:@"UI Configure" id:InputItemID_TAB getter:joystick_get_state context:&_buttons[0][OEArcadeUIConfigure]];
 }
 
+- (void)didChangeDisplayBounds:(NSSize)bounds fps:(double)fps aspect:(NSSize)aspect
+{
+    _screenRect = {{0, 0}, OEIntSizeMake(bounds.width, bounds.height)};
+    
+    // for single screen games:
+    BOOL singleScreen = YES;
+    if (singleScreen)
+    {
+        CGFloat newHeight = (aspect.height / aspect.width) * bounds.width;
+        _aspectSize = OEIntSizeMake(bounds.width, newHeight);
+    }
+    else
+    {
+        _aspectSize = OEIntSizeMake(bounds.width, bounds.height);
+    }
+    
+    _frameInterval = fps;
+}
+
 - (void)updateAudioBuffer:(const int16_t *)buffer samples:(NSInteger)samples
 {
     id<OEAudioBuffer> buf = [self audioBufferAtIndex:0];
@@ -152,7 +157,19 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 
 - (void)logLevel:(OSDLogLevel)level message:(NSString *)msg
 {
-    NSLog(@"%@", msg);
+    switch (level) {
+        case OSDLogLevelError:
+            os_log_error(OE_CORE_LOG, "%{public}s", msg.UTF8String);
+            break;
+            
+        case OSDLogLevelVerbose:
+            os_log_debug(OE_CORE_LOG, "%{public}s", msg.UTF8String);
+            break;
+            
+        default:
+            os_log_info(OE_CORE_LOG, "%{public}s", msg.UTF8String);
+            break;
+    }
 }
 
 #pragma mark - Execution
@@ -160,84 +177,109 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     NSString *romDir = [path stringByDeletingLastPathComponent];
-    //[_osd setBasePath:[romDir stringByDeletingLastPathComponent]];
-    [_osd setBasePath:self.supportDirectoryPath];
-    _osd.romsPath = romDir;
+    Options *opts = _osd.options;
+    [opts setBasePath:self.supportDirectoryPath];
+    opts.romsPath = romDir;
+    BOOL prev;
+    prev = opts.autoStretchXY;
+    opts.autoStretchXY = NO;
+    prev = opts.unevenStretchX;
+    opts.unevenStretchX = NO;
+    prev = opts.unevenStretchY;
+    opts.unevenStretchY = NO;
+    prev = opts.unevenStretch;
+    opts.unevenStretch = NO;
+    opts.keepAspect = YES;
+    
+    _osd.verboseOutput = NO; // TODO: debug only; remove later
+
     NSString *rom = [[path lastPathComponent] stringByDeletingPathExtension];
-    BOOL success = [_osd loadGame:rom error:error];
-    if (!success && error != nil && *error != nil)
+    AuditResult *ar;
+    BOOL success = [_osd loadGame:rom withAuditResult:&ar error:error];
+    if (!success)
     {
-        *error = [self normalizeError:*error forRomDir:romDir forDriver:rom];
+        if (error != nil && ar != nil)
+        {
+            *error = [self processAuditResult:ar forRomDir:romDir];
+        }
+
         return NO;
     }
-    return success;
+    
+    _supportsRewinding = _osd.supportsSave && _osd.stateSize < 1e6;
+    if (_osd.supportsSave && !_supportsRewinding)
+    {
+        os_log_info(OE_CORE_LOG, "disabling rewind support, save state size too big %{iec-bytes}ld", _osd.stateSize);
+    }
+
+    return YES;
 }
 
-- (NSError *)normalizeError:(NSError *)error forRomDir:(NSString *)romDir forDriver:(NSString *)driver
+- (NSError *)processAuditResult:(AuditResult *)ar forRomDir:(NSString *)romDir
 {
-    NSURL *romDirURL = [NSURL fileURLWithPath:romDir isDirectory:YES];
-    NSLog(@"MAME: Audit failed with output:\n%@", error.localizedFailureReason);
-    NSString *auditOutput = error.localizedFailureReason;
-    
-    // Parse MAME's audit report and build a list of missing/incomplete required files
-    NSMutableOrderedSet *missingFilesSet = [NSMutableOrderedSet new];
-
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(?<=NOT FOUND \\()(.*?)(?=\\)\n)|(?<=: )([^\\s]+)(.*?)(?= - NOT FOUND\n)" options:NSRegularExpressionCaseInsensitive error:nil];
-
     NSString *gameDriverName = _osd.driverName;
+    NSMutableOrderedSet<MAMEAuditResult *> *results = [NSMutableOrderedSet new];
+    
+    for (AuditRecord *rec in ar.records) {
+        
+        switch (rec.substatus) {
+            case AuditSubstatusGood:
+                continue;
+                
+            case AuditSubstatusFoundNodump:
+            case AuditSubstatusGoodNeedsRedump:
+            case AuditSubstatusNotFoundNoDump:
+            case AuditSubstatusNotFoundOptional:
+                // acceptable conditions, based on audit.cpp:media_auditor::summarize method,
+                // which all result in a BEST_AVAILABLE status
+                continue;
 
-    [regex enumerateMatchesInString:auditOutput options:0 range:NSMakeRange(0, auditOutput.length) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-        if (result == nil) return;
-
-        NSRange range = result.range;
-        NSRange secondGroup = [result rangeAtIndex:2];
-        NSRange thirdGroup  = [result rangeAtIndex:3];
-
-        NSString *match = [auditOutput substringWithRange:range];
-        NSMutableString *fileName = [NSMutableString stringWithString:match];
-
-        // Assumed missing/incomplete parent, device or BIOS ROM
-        if(secondGroup.location == NSNotFound && thirdGroup.location == NSNotFound)
-        {
-            [fileName appendString:@".zip"];
+            // bad conditions
+                
+            case AuditSubstatusFoundWrongLength: {
+                os_log_debug(OE_CORE_AUDIT_LOG, "wrong length: %{public}@, media type %ld", rec.name, rec.mediaType);
+                [results addObject:[[MAMEAuditResult alloc] initWithDriver:gameDriverName auditRecord:rec]];
+                break;
+            }
+                
+            case AuditSubstatusFoundBadChecksum: {
+                os_log_debug(OE_CORE_AUDIT_LOG, "bad checksum: %{public}@, media type %ld", rec.name, rec.mediaType);
+                [results addObject:[[MAMEAuditResult alloc] initWithDriver:gameDriverName auditRecord:rec]];
+                break;
+            }
+                
+            case AuditSubstatusNotFound: {
+                os_log_debug(OE_CORE_AUDIT_LOG, "not found: %{public}@, media type %ld", rec.name, rec.mediaType);
+                [results addObject:[[MAMEAuditResult alloc] initWithDriver:gameDriverName auditRecord:rec]];
+                break;
+            }
+                
+            case AuditSubstatusUnverified:
+            default:
+                continue;
         }
-        // Assumed missing CHD
-        else if(secondGroup.location != NSNotFound && [auditOutput substringWithRange:thirdGroup].length == 0)
-        {
-            [fileName appendString:@".chd"];
-
-        }
-        // Assumed driver/clone ROM loaded is missing files
-        else
-        {
-            //NSString *match = [auditOutput substringWithRange:secondGroup];
-            fileName = [NSMutableString stringWithFormat:@"%@.zip", gameDriverName];
-        }
-
-        [missingFilesSet addObject:fileName];
-    }];
-
+    }
+    
     // Sort missing files by ascending order
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"self"
                                                                      ascending:YES];
-    [missingFilesSet sortUsingDescriptors:@[sortDescriptor]];
-
+    [results sortUsingDescriptors:@[sortDescriptor]];
+    
     // Determine if ROMs exist with missing files, or are not found
+    NSURL *romDirURL = [NSURL fileURLWithPath:romDir isDirectory:YES];
     NSMutableString *missingFilesList = [NSMutableString string];
-    for(NSString *missingFile in missingFilesSet)
+    for(MAMEAuditResult *result in results)
     {
-        NSURL *missingFileURL = [romDirURL URLByAppendingPathComponent:missingFile];
-
-        if([missingFileURL checkResourceIsReachableAndReturnError:nil])
+        if ([result checkSetExistsInDir:romDirURL])
         {
-            [missingFilesList appendString:[NSString stringWithFormat:@"%@  \t- INCORRECT SET\n", missingFile]];
+            [missingFilesList appendString:[NSString stringWithFormat:@"%@  \t- INCORRECT SET\n", result.fileName]];
         }
         else
         {
-            [missingFilesList appendString:[NSString stringWithFormat:@"%@  \t- NOT FOUND\n", missingFile]];
+            [missingFilesList appendString:[NSString stringWithFormat:@"%@  \t- NOT FOUND\n", result.fileName]];
         }
     }
-
+    
     // Give an audit report to the user
     NSString *game = [NSString stringWithFormat:@"%@ (%@.zip)", _osd.driverFullName, _osd.driverName];
     NSString *versionRequired = [[[[[self owner] bundle] infoDictionary] objectForKey:@"CFBundleVersion"] substringToIndex:5];
@@ -368,7 +410,7 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 
 - (BOOL)supportsRewinding
 {
-    return _osd.supportsSave;
+    return _supportsRewinding;
 }
 
 - (NSData *)serializeStateWithError:(NSError *__autoreleasing *)outError
@@ -379,6 +421,95 @@ static uint32_t joystick_get_state(void *device_internal, void *item_internal)
 - (BOOL)deserializeState:(NSData *)state withError:(NSError *__autoreleasing *)outError
 {
     return [_osd deserializeState:state];
+}
+
+@end
+
+@implementation MAMEAuditResult
+{
+    NSString    *_driver;
+    AuditRecord *_record;
+}
+
+- (instancetype)initWithDriver:(NSString *)driver auditRecord:(AuditRecord *)record
+{
+    if ((self = [super init]))
+    {
+        _driver = driver;
+        _record = record;
+    }
+    return self;
+}
+
+- (NSString *)identifier
+{
+    if (_record.mediaType == AuditMediaTypeDisk)
+    {
+        // a CHD
+        return _record.name;
+    }
+    
+    Device *parent = _record.sharedDevice;
+    if (parent)
+    {
+        return parent.shortName;
+    }
+    
+    return _driver;
+}
+
+- (NSArray<NSString *> *)extensions
+{
+    if (_record.mediaType == AuditMediaTypeDisk)
+    {
+        return @[@".chd"];
+    }
+    
+    return @[@".zip", @".7z"];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (object == nil || ![object isKindOfClass:self.class])
+    {
+        return NO;
+    }
+    
+    MAMEAuditResult *other = (MAMEAuditResult *)object;
+    return self.identifier == other.identifier;
+}
+
+- (NSComparisonResult)compare:(MAMEAuditResult *)other
+{
+    return [self.identifier compare:other.identifier];
+}
+
+/*! Returns the first valid file name for this result
+ */
+- (NSString *)fileName
+{
+    return [self.identifier stringByAppendingString:[[self extensions] firstObject]];
+}
+
+/*! Determines if the ROM set exists
+ */
+- (BOOL)checkSetExistsInDir:(NSURL *)dir
+{
+    for (NSString *ext in [self extensions])
+    {
+        NSURL *missingFileURL = [dir URLByAppendingPathComponent:[self.identifier stringByAppendingString:ext]];
+    
+        if([missingFileURL checkResourceIsReachableAndReturnError:nil])
+        {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (NSUInteger)hash
+{
+    return self.identifier.hash;
 }
 
 @end

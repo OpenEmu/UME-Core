@@ -54,6 +54,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		050B7E8823775A04000ECB19 /* driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = driver.h; path = deps/mame/src/osd/headless/public/driver.h; sourceTree = "<group>"; };
+		050B7E8923775A04000ECB19 /* oecommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = oecommon.h; path = deps/mame/src/osd/headless/public/oecommon.h; sourceTree = "<group>"; };
+		050B7E8A23775A04000ECB19 /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = options.h; path = deps/mame/src/osd/headless/public/options.h; sourceTree = "<group>"; };
+		050B7E8B23775A04000ECB19 /* headless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = headless.h; path = deps/mame/src/osd/headless/public/headless.h; sourceTree = "<group>"; };
 		0510AA1B230081F3002028C1 /* inputenum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inputenum.h; path = deps/mame/src/osd/headless/public/inputenum.h; sourceTree = "<group>"; };
 		0510AA1C230081F3002028C1 /* osd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = osd.h; path = deps/mame/src/osd/headless/public/osd.h; sourceTree = "<group>"; };
 		0510AA1D2300825D002028C1 /* mamearcade_headless.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mamearcade_headless.dylib; path = deps/mame/mamearcade_headless.dylib; sourceTree = "<group>"; };
@@ -169,6 +173,10 @@
 		D0BA5A9517645D630033A910 /* osd */ = {
 			isa = PBXGroup;
 			children = (
+				050B7E8823775A04000ECB19 /* driver.h */,
+				050B7E8B23775A04000ECB19 /* headless.h */,
+				050B7E8923775A04000ECB19 /* oecommon.h */,
+				050B7E8A23775A04000ECB19 /* options.h */,
 				0510AA1B230081F3002028C1 /* inputenum.h */,
 				0510AA1C230081F3002028C1 /* osd.h */,
 			);
@@ -338,7 +346,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				ONLY_ACTIVE_ARCH = YES;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
@@ -391,7 +399,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
 			};
