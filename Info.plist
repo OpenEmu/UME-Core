@@ -19,23 +19,11 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.215.0</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSPrincipalClass</key>
 	<string>OEGameCoreController</string>
 	<key>OEGameCoreClass</key>
 	<string>MAMEGameCore</string>
-	<key>OEGameCorePlayerCount</key>
-	<string>8</string>
-	<key>OEProjectURL</key>
-	<string>http://mamedev.org</string>
-	<key>OESystemIdentifiers</key>
-	<array>
-		<string>openemu.system.arcade</string>
-	</array>
-	<key>SUEnableAutomaticChecks</key>
-	<string>1</string>
-	<key>SUFeedURL</key>
-	<string>https://raw.github.com/OpenEmu/OpenEmu-Update/master/mame_appcast.xml</string>
 	<key>OEGameCoreOptions</key>
 	<dict>
 		<key>openemu.system.arcade</key>
@@ -50,5 +38,17 @@
 			<true/>
 		</dict>
 	</dict>
+	<key>OEGameCorePlayerCount</key>
+	<string>8</string>
+	<key>OEProjectURL</key>
+	<string>http://mamedev.org</string>
+	<key>OESystemIdentifiers</key>
+	<array>
+		<string>openemu.system.arcade</string>
+	</array>
+	<key>SUEnableAutomaticChecks</key>
+	<string>1</string>
+	<key>SUFeedURL</key>
+	<string>https://raw.github.com/OpenEmu/OpenEmu-Update/master/mame_appcast.xml</string>
 </dict>
 </plist>
