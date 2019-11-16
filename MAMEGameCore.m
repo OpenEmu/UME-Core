@@ -174,6 +174,19 @@ static os_log_t OE_CORE_LOG, OE_CORE_AUDIT_LOG;
 
 #pragma mark - Execution
 
+BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
+{
+    if ((o & GameDriverMachineNotWorking) == GameDriverMachineNotWorking) {
+        return YES;
+    }
+    
+    if ((o & GameDriverMachineIsSkeleton) == GameDriverMachineNotWorking) {
+        return YES;
+    }
+    
+    return NO;
+}
+
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     NSString *romDir = [path stringByDeletingLastPathComponent];
@@ -203,6 +216,22 @@ static os_log_t OE_CORE_LOG, OE_CORE_AUDIT_LOG;
             *error = [self processAuditResult:ar forRomDir:romDir];
         }
 
+        return NO;
+    }
+    
+    GameDriver *driver = _osd.driver;
+    
+    // verify driver flags
+    if (hasUnsupportedGameDriverOptions(driver.flags))
+    {
+        if (error != nil)
+        {
+            *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:@{
+                NSLocalizedDescriptionKey : @"Unable to load ROM.",
+                NSLocalizedRecoverySuggestionErrorKey: [NSString stringWithFormat:@"\"%@\" (%@).\n\nThis machine does not work and the emulation is not yet complete. There is nothing you can do to fix this problem except wait for the MAME developers to improve the emulation.", driver.fullName, driver.name],
+            }];
+        }
+        
         return NO;
     }
     
