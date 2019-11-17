@@ -180,7 +180,7 @@ BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
         return YES;
     }
     
-    if ((o & GameDriverMachineIsSkeleton) == GameDriverMachineNotWorking) {
+    if ((o & GameDriverMachineIsSkeleton) == GameDriverMachineIsSkeleton) {
         return YES;
     }
     
