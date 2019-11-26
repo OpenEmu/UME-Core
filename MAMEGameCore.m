@@ -174,7 +174,7 @@ static os_log_t OE_CORE_LOG, OE_CORE_AUDIT_LOG;
 
 #pragma mark - Execution
 
-BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
+BOOL driverIsNotWorking(GameDriverOptions o)
 {
     if ((o & GameDriverMachineNotWorking) == GameDriverMachineNotWorking) {
         return YES;
@@ -185,6 +185,36 @@ BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
     }
     
     return NO;
+}
+
+- (BOOL)validateGameDriver:(GameDriver *)driver error:(NSError **)error
+{
+    GameDriverOptions o = driver.flags;
+    
+    if (o & (GameDriverMachineClickableArtwork | GameDriverMachineRequiresArtwork | GameDriverMachineMechanical))
+    {
+        if (error != nil)
+        {
+            *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:@{
+                NSLocalizedDescriptionKey : @"Unable to load ROM.",
+                NSLocalizedRecoverySuggestionErrorKey: [NSString stringWithFormat:@"\"%@\" (%@).\n\nMechanical systems or systems which require artwork to operate are not supported.", driver.fullName, driver.name],
+            }];
+        }
+        return NO;
+    }
+    
+    if (driverIsNotWorking(o)) {
+        if (error != nil)
+        {
+            *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:@{
+                NSLocalizedDescriptionKey : @"Unable to load ROM.",
+                NSLocalizedRecoverySuggestionErrorKey: [NSString stringWithFormat:@"\"%@\" (%@).\n\nThis machine does not work and the emulation is not yet complete. There is nothing you can do to fix this problem except wait for the MAME developers to improve the emulation.", driver.fullName, driver.name],
+            }];
+        }
+        return NO;
+    }
+    
+    return YES;
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
@@ -208,30 +238,28 @@ BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
 
     NSString *rom = [[path lastPathComponent] stringByDeletingPathExtension];
     AuditResult *ar;
-    BOOL success = [_osd loadGame:rom withAuditResult:&ar error:error];
+    BOOL success = [_osd setDriver:rom withAuditResult:&ar error:error];
     if (!success)
     {
-        if (error != nil && ar != nil)
-        {
-            *error = [self processAuditResult:ar forRomDir:romDir];
-        }
-
         return NO;
     }
     
-    GameDriver *driver = _osd.driver;
+    if (![self validateGameDriver:_osd.driver error:error])
+    {
+        return NO;
+    }
     
-    // verify driver flags
-    if (hasUnsupportedGameDriverOptions(driver.flags))
+    if (ar.summary == AuditSummaryIncorrect || ar.summary == AuditSummaryNotFound)
     {
         if (error != nil)
         {
-            *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:@{
-                NSLocalizedDescriptionKey : @"Unable to load ROM.",
-                NSLocalizedRecoverySuggestionErrorKey: [NSString stringWithFormat:@"\"%@\" (%@).\n\nThis machine does not work and the emulation is not yet complete. There is nothing you can do to fix this problem except wait for the MAME developers to improve the emulation.", driver.fullName, driver.name],
-            }];
+            *error = [self processAuditResult:ar forRomDir:romDir];
         }
-        
+        return NO;
+    }
+    
+    if (![_osd initializeWithError:error])
+    {
         return NO;
     }
     
@@ -246,7 +274,8 @@ BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
 
 - (NSError *)processAuditResult:(AuditResult *)ar forRomDir:(NSString *)romDir
 {
-    NSString *gameDriverName = _osd.driverName;
+    GameDriver *driver = _osd.driver;
+    NSString *gameDriverName = driver.name;
     NSMutableOrderedSet<MAMEAuditResult *> *results = [NSMutableOrderedSet new];
     
     for (AuditRecord *rec in ar.records) {
@@ -310,7 +339,7 @@ BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
     }
     
     // Give an audit report to the user
-    NSString *game = [NSString stringWithFormat:@"%@ (%@.zip)", _osd.driverFullName, _osd.driverName];
+    NSString *game = [NSString stringWithFormat:@"%@ (%@.zip)", driver.fullName, gameDriverName];
     NSString *versionRequired = [[[[[self owner] bundle] infoDictionary] objectForKey:@"CFBundleVersion"] substringToIndex:5];
 
     NSError *outErr = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:@{
@@ -423,7 +452,7 @@ BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
     else
     {
         err = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError userInfo:@{
-            NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Game \"%@\" does not not support save states.", _osd.driverFullName],
+            NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Game \"%@\" does not not support save states.", _osd.driver.fullName],
         }];
     }
     
@@ -442,7 +471,7 @@ BOOL hasUnsupportedGameDriverOptions(GameDriverOptions o)
     else
     {
         err = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError userInfo:@{
-            NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Game \"%@\" does not not support save states.", _osd.driverFullName],
+            NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Game \"%@\" does not not support save states.", _osd.driver.fullName],
         }];
     }
     
