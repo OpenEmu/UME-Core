@@ -70,7 +70,7 @@
 		D00A069F17637AB600C99008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		D00A06A417637E9100C99008 /* MAMEGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAMEGameCore.h; sourceTree = "<group>"; };
 		D00A06A517637E9100C99008 /* MAMEGameCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAMEGameCore.m; sourceTree = "<group>"; };
-		D00A06A717637EB500C99008 /* OEArcadeSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OEArcadeSystemResponderClient.h; path = ../OpenEmu/Arcade/OEArcadeSystemResponderClient.h; sourceTree = "<group>"; };
+		D00A06A717637EB500C99008 /* OEArcadeSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OEArcadeSystemResponderClient.h; path = ../OpenEmu/SystemPlugins/Arcade/OEArcadeSystemResponderClient.h; sourceTree = "<group>"; };
 		D0AADE2F176381FB00759E26 /* MAME_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAME_Prefix.pch; sourceTree = "<group>"; };
 		D0AADE30176382F900759E26 /* OpenEmuBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEmuBase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0AADE331763838A00759E26 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -97,7 +97,7 @@
 				D00A06A317637BDD00C99008 /* Classes */,
 				D0AADE2E176381E900759E26 /* Other Sources */,
 				D00A06931763763000C99008 /* Resources */,
-				D00A068C1763763000C99008 /* Frameworks and Libraries */,
+				D00A068C1763763000C99008 /* Frameworks */,
 				D00A068B1763763000C99008 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -110,7 +110,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D00A068C1763763000C99008 /* Frameworks and Libraries */ = {
+		D00A068C1763763000C99008 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				0510AA1D2300825D002028C1 /* mamearcade_headless.dylib */,
@@ -118,7 +118,7 @@
 				D00A068F1763763000C99008 /* Linked Frameworks */,
 				D0AADE321763833600759E26 /* Other Frameworks */,
 			);
-			name = "Frameworks and Libraries";
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		D00A068F1763763000C99008 /* Linked Frameworks */ = {
@@ -138,7 +138,6 @@
 				D00A069F17637AB600C99008 /* Info.plist */,
 			);
 			name = Resources;
-			path = MAME;
 			sourceTree = "<group>";
 		};
 		D00A06A317637BDD00C99008 /* Classes */ = {
