@@ -408,7 +408,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.227.0;
+				CURRENT_PROJECT_VERSION = 0.227.0.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXCLUDED_ARCHS = arm64;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
@@ -436,7 +436,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.227.0;
+				CURRENT_PROJECT_VERSION = 0.227.0.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXCLUDED_ARCHS = arm64;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
