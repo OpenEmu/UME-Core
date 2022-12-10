@@ -67,9 +67,9 @@
 
 @end
 
-static uint32_t joystick_get_state(void *device_internal, void *item_internal)
+static int32_t joystick_get_state(void *device_internal, void *item_internal)
 {
-    return *(uint32_t *)item_internal;
+    return *(int32_t *)item_internal;
 }
 
 static os_log_t OE_CORE_LOG, OE_CORE_AUDIT_LOG;
