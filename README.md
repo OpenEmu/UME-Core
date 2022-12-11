@@ -10,7 +10,7 @@ You must build the `mamearcade_headless.dylib` dynamic library before building t
 
 ```sh
 $ cd deps/mame
-$ make macosx_x64_clang OSD="headless" verbose=1 TARGETOS="macosx" CONFIG="release" TARGET=mame SUBTARGET=arcade MACOSX_DEPLOYMENT_TARGET=10.14 -j8
+$ make macosx_x64_clang OSD="headless" verbose=1 TARGETOS="macosx" CONFIG="release" TARGET=mame SUBTARGET=arcade MACOSX_DEPLOYMENT_TARGET=12.4 -j8
 ```
 
 Depending on your hardware, this could take a _long_ time, but if successful, you will have a file named `mamearcade_headless.dylib` in the current directory.
